@@ -188,3 +188,24 @@ class TestL10nEcPurchaseLiquidation(TestL10nECEdiCommon):
                 line.quantity = 0
         with self.assertRaises(UserError):
             invoice.action_post()
+
+    @patch_service_sri
+    def test_l10n_ec_liquidation_action_send_and_print(self):
+        """Test action_send_and_print for purchase liquidation opens custom wizard"""
+        self._setup_edi_company_ec()
+        liquidation = self._l10n_ec_prepare_edi_liquidation(auto_post=True)
+        edi_doc = liquidation._get_edi_document(self.edi_format)
+        edi_doc._process_documents_web_services(with_commit=False)
+
+        # Llamar a action_send_and_print para liquidación de compra
+        result = liquidation.action_send_and_print()
+
+        # Verificar que devuelve el wizard account.move.send
+        self.assertEqual(result["type"], "ir.actions.act_window")
+        self.assertEqual(result["res_model"], "account.move.send")
+        self.assertEqual(result["view_mode"], "form")
+        self.assertEqual(result["target"], "new")
+        self.assertIn("context", result)
+        self.assertIn("active_ids", result["context"])
+        self.assertIn(liquidation.id, result["context"]["active_ids"])
+        self.assertIn("default_mail_template_id", result["context"])
