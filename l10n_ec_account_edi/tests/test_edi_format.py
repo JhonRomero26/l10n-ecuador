@@ -214,3 +214,45 @@ class TestAccountEdiFormat(TestL10nECEdiCommon):
                 for error in errors
             )
         )
+
+    def test_l10n_ec_get_edi_ws_client_connection_error(self):
+        """Test error when connection to SRI web service fails"""
+        from unittest.mock import patch
+
+        self._setup_edi_company_ec()
+
+        # Mock zeep.Client to raise an exception
+        with patch(
+            "odoo.addons.l10n_ec_account_edi.models.account_edi_format.Client"
+        ) as mock_client:
+            mock_client.side_effect = Exception("Connection timeout")
+
+            # Capturar los warnings generados
+            with self.assertLogs(
+                "odoo.addons.l10n_ec_account_edi.models.account_edi_format",
+                level="WARNING",
+            ) as log_catcher:
+                # Intentar obtener cliente de recepción
+                client = self.edi_format._l10n_ec_get_edi_ws_client("test", "reception")
+
+                # Verificar que retorna None cuando hay error
+                self.assertIsNone(client)
+
+                # Intentar obtener cliente de autorización
+                client = self.edi_format._l10n_ec_get_edi_ws_client(
+                    "production", "authorization"
+                )
+
+                # Verificar que retorna None cuando hay error
+                self.assertIsNone(client)
+
+            # Verificar que se registraron los warnings esperados
+            self.assertEqual(len(log_catcher.output), 2)
+            self.assertIn(
+                "Error in Connection with web services of SRI", log_catcher.output[0]
+            )
+            self.assertIn("Connection timeout", log_catcher.output[0])
+            self.assertIn(
+                "Error in Connection with web services of SRI", log_catcher.output[1]
+            )
+            self.assertIn("Connection timeout", log_catcher.output[1])
