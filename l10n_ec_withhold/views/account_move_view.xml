@@ -229,7 +229,6 @@
         </field>
     </record>
 
-
     <record id="action_account_move_purchase_withhold" model="ir.actions.act_window">
         <field name="name">Purchase Withholds</field>
         <field name="res_model">account.move</field>
