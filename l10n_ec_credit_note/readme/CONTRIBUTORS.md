@@ -1,2 +1,3 @@
+- Jhon Romero <romerogonzaga21@gmail.com> (https://jhonromero.dev)
 - Ricardo Jara \<<rvjaraj@gmail.com>\>
 - Carlos Lopez \<<celm1990@gmail.com>\>

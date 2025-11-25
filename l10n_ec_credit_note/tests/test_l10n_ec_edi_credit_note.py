@@ -13,7 +13,6 @@ class TestL10nClDte(TestL10nECEdiCommon):
         super().setUpClass()
         cls.discount_account_id = cls.env["account.account"].create(
             {
-                "company_id": cls.company_data["company"].id,
                 "name": "Discount Account",
                 "account_type": "income",
                 "code": "411041104110",
@@ -21,7 +20,6 @@ class TestL10nClDte(TestL10nECEdiCommon):
         )
         cls.return_account_id = cls.env["account.account"].create(
             {
-                "company_id": cls.company_data["company"].id,
                 "name": "Return Account",
                 "account_type": "income",
                 "code": "411141114111",
@@ -47,8 +45,8 @@ class TestL10nClDte(TestL10nECEdiCommon):
                 "name": "Test Category",
                 "property_cost_method": "average",
                 "property_valuation": "real_time",
-                "l10n_ec_property_account_return_id": cls.return_account_id,
-                "l10n_ec_property_account_discount_id": cls.discount_account_id,
+                "l10n_ec_property_account_return_id": cls.return_account_id.id,
+                "l10n_ec_property_account_discount_id": cls.discount_account_id.id,
                 "property_stock_account_input_categ_id": cls.stock_input_account.id,
                 "property_stock_account_output_categ_id": cls.stock_output_account.id,
                 "property_stock_valuation_account_id": cls.stock_valuation_account.id,
@@ -59,9 +57,10 @@ class TestL10nClDte(TestL10nECEdiCommon):
         cls.product = cls.env["product.product"].create(
             {
                 "name": "Test Product",
-                "detailed_type": "product",
+                "type": "consu",
                 "categ_id": cls.category.id,
                 "standard_price": 100,
+                "is_storable": True,
             }
         )
 
@@ -88,7 +87,7 @@ class TestL10nClDte(TestL10nECEdiCommon):
         )
         new_move_ids = credit_note_wizard.new_move_ids
         if auto_post:
-            new_move_ids = invoice.reversal_move_id.filtered(
+            new_move_ids = invoice.reversal_move_ids.filtered(
                 lambda x: x.move_type == "out_refund"
             )
         return new_move_ids
