@@ -14,7 +14,7 @@ class AccountJournal(models.Model):
 
     @api.onchange("type")
     def _onchange_type(self):
-        res = super()._onchange_type()
+        res = super()._onchange_type_for_alias()
         if self.type != "general":
             self.l10n_ec_withholding_type = False
         return res

@@ -1,4 +1,6 @@
-from odoo import _, api, fields, models
+from collections import defaultdict
+
+from odoo import Command, _, api, fields, models
 
 
 class WizardAbstractWithhold(models.AbstractModel):
@@ -17,7 +19,6 @@ class WizardAbstractWithhold(models.AbstractModel):
     document_number = fields.Char(
         required=False,
         size=17,
-        compute="_compute_document_number",
         store=True,
         readonly=False,
     )
@@ -31,18 +32,11 @@ class WizardAbstractWithhold(models.AbstractModel):
         readonly=True,
     )
 
-    @api.depends("journal_id")
-    def _compute_document_number(self):
-        for wizard in self:
-            if (
-                wizard.journal_id
-                and wizard.journal_id.l10n_ec_withholding_type == "purchase"
-            ):
-                move = self.env["account.move"].new(self._prepare_withholding_vals())
-                move._set_next_sequence()
-                wizard.document_number = move.l10n_latam_document_number
-            else:
-                wizard.document_number = False
+    def _set_document_number(self, move):
+        move._set_next_sequence()
+        document_number = move.l10n_latam_document_number
+        if move.is_purchase_withhold():
+            move.ref = document_number
 
     def _prepare_withholding_vals(self):
         return {
@@ -54,6 +48,63 @@ class WizardAbstractWithhold(models.AbstractModel):
             "l10n_latam_document_type_id": self.env.ref("l10n_ec.ec_dt_07").id,
             "partner_id": self.partner_id.id,
         }
+
+    def _tax_support_label(self, value):
+        selection = self.withhold_line_ids._fields["l10n_ec_tax_support"].selection
+        return dict(selection).get(value)
+
+    def _create_withholding_move(self):
+        """Crea el move de retención, asigna secuencia y referencia; retorna el move."""
+        vals = self._prepare_withholding_vals()
+        move = self.env["account.move"].create(vals)
+        self._set_document_number(move)
+        return move
+
+    def _build_line_commands(self, move, counterpart="payable"):
+        """
+        Arma Command.create(...) de líneas:
+        - Líneas base + contrapartidas por impuesto por cada wline.
+        - Una contrapartida agregada por factura (totales).
+        counterpart: 'payable' (compra) o 'receivable' (venta)
+        """
+        self.ensure_one()
+        cmds = []
+        totals = defaultdict(float)
+
+        for wline in self.withhold_line_ids:
+            for tax_vals in wline._get_withholding_line_vals(self):
+                cmds.append(Command.create(tax_vals))
+            totals[wline.invoice_id] += abs(wline.withhold_amount)
+
+        for invoice, total in totals.items():
+            move_name = _(
+                "RET: %(document_number)s Invoice: %(invoice_number)s",
+                document_number=move.l10n_latam_document_number,
+                invoice_number=invoice.l10n_latam_document_number,
+            )
+            if counterpart == "payable":
+                # Purchase: debit to Pay (passive)
+                debit, credit = total, 0.0
+                account_id = self.partner_id.property_account_payable_id.id
+            else:
+                # Sell: credit to Receive (active)
+                debit, credit = 0.0, total
+                account_id = self.partner_id.property_account_receivable_id.id
+
+            cmds.append(
+                Command.create(
+                    {
+                        "partner_id": self.partner_id.id,
+                        "account_id": account_id,
+                        "l10n_ec_invoice_withhold_id": invoice.id,
+                        "name": move_name,
+                        "debit": debit,
+                        "credit": credit,
+                    }
+                )
+            )
+
+        return cmds, totals
 
     def _try_reconcile_withholding_moves(self, withholding, invoice, account_type):
         assert account_type in ["asset_receivable", "liability_payable"], _(

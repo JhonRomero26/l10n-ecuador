@@ -1,4 +1,4 @@
-from odoo import _, api, fields, models
+from odoo import Command, _, api, fields, models
 from odoo.exceptions import UserError
 from odoo.tools import float_is_zero
 
@@ -30,83 +30,65 @@ class WizardCreatePurchaseWithhold(models.TransientModel):
         withholding_vals["l10n_ec_withholding_type"] = "purchase"
         return withholding_vals
 
-    def button_validate(self):
+    def _has_base_for_line(self, wline):
         """
-        Create a purchase Withholding and try reconcile with invoice
+        Debe existir al menos una línea de factura con soporte coincidente
+        e impuestos.
         """
+        inv = wline.invoice_id
+        target_support = wline.l10n_ec_tax_support
+        for il in inv.invoice_line_ids:
+            support = il.l10n_ec_tax_support or inv.l10n_ec_tax_support
+            if support == target_support and il.tax_ids:
+                return True
+        return False
+
+    def _validate_withhold_bases(self):
+        """Valida que existan bases imponibles coherentes por línea de retención."""
         self.ensure_one()
         if not self.withhold_line_ids:
             raise UserError(_("Please add some withholding lines before continue"))
-        tax_support_string = dict(
-            self.withhold_line_ids._fields["l10n_ec_tax_support"].selection
-        )
-        for line in self.withhold_line_ids:
-            has_lines_with_tax_and_tax_support = False
-            for invoice_line in line.invoice_id.invoice_line_ids:
-                l10n_ec_tax_support = (
-                    invoice_line.l10n_ec_tax_support
-                    or line.invoice_id.l10n_ec_tax_support
-                )
-                if (
-                    l10n_ec_tax_support == line.l10n_ec_tax_support
-                    and invoice_line.tax_ids
-                ):
-                    has_lines_with_tax_and_tax_support = True
-            if not has_lines_with_tax_and_tax_support:
+
+        for wline in self.withhold_line_ids:
+            if not self._has_base_for_line(wline):
                 raise UserError(
                     _(
                         "The base amount for withholding is zero.\n"
                         "Review withholding lines with Tax Support: %s.\n"
                         "Please ensure the following:\n"
-                        " - The tax support of the invoice lines"
-                        "(or Tax support on the invoice) "
-                        "is equal to Tax support of the withholding line.\n"
-                        " - The invoice lines have taxes "
-                        "correctly configured(VAT or Profit).",
-                        tax_support_string.get(line.l10n_ec_tax_support),
+                        " - The tax support of the invoice lines (or Tax support "
+                        "   on the invoice) is equal to Tax support of the "
+                        "   withholding line.\n"
+                        " - The invoice lines have taxes correctly configured "
+                        "   (VAT or Profit).",
+                        self._tax_support_label(wline.l10n_ec_tax_support),
                     )
                 )
-        withholding_vals = self._prepare_withholding_vals()
-        total_by_invoice = {}
-        lines = []
-        for line in self.withhold_line_ids:
-            taxes_vals = line._get_withholding_line_vals(self)
-            total_counter = abs(line.withhold_amount)
-            total_by_invoice.setdefault(line.invoice_id, 0.0)
-            total_by_invoice[line.invoice_id] += total_counter
-            for tax_vals in taxes_vals:
-                lines.append((0, 0, tax_vals))
-        for invoice, total_counter in total_by_invoice.items():
-            move_name = _(
-                "RET: %(document_number)s Invoice: %(invoice_number)s",
-                document_number=self.document_number,
-                invoice_number=invoice.l10n_latam_document_number,
-            )
-            lines.append(
-                (
-                    0,
-                    0,
-                    {
-                        "partner_id": self.partner_id.id,
-                        "account_id": self.partner_id.property_account_payable_id.id,
-                        "l10n_ec_invoice_withhold_id": invoice.id,
-                        "name": move_name,
-                        "debit": total_counter,
-                        "credit": 0.0,
-                    },
-                )
-            )
 
-        withholding_vals.update({"line_ids": lines})
-        new_withholding = self.env["account.move"].create(withholding_vals)
-        new_withholding._post()
-        invoices = self.withhold_line_ids.invoice_id
-        invoices.write({"l10n_ec_withhold_ids": [(4, new_withholding.id)]})
-        self._try_reconcile_withholding_moves(
-            new_withholding, invoices, "liability_payable"
+    def _post_link_and_reconcile(self, move, total_by_invoice, account_type):
+        """
+        Postea, linkea a facturas y reconcilia:
+        - account_type: 'liability_payable' (compra) o 'asset_receivable' (venta)
+        """
+        invoices = self.withhold_line_ids.mapped("invoice_id")
+        invoices.write({"l10n_ec_withhold_ids": [Command.link(move.id)]})
+        self._try_reconcile_withholding_moves(move, invoices, account_type)
+        move.line_ids.filtered("tax_ids").write({"l10n_ec_withhold_id": move.id})
+
+    def button_validate(self):
+        """
+        Create a Purchase Withholding and try to reconcile with invoice
+        """
+        self.ensure_one()
+        self._validate_withhold_bases()
+
+        move = self._create_withholding_move()
+        cmds, total_by_invoice = self._build_line_commands(move, counterpart="payable")
+        move.write({"line_ids": cmds})
+        move._post()
+        self._post_link_and_reconcile(
+            move, total_by_invoice, account_type="liability_payable"
         )
-        withholding_lines = new_withholding.line_ids.filtered(lambda line: line.tax_ids)
-        withholding_lines.write({"l10n_ec_withhold_id": new_withholding.id})
         return True
 
 

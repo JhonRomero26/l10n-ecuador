@@ -1,3 +1,4 @@
+- Jhon Romero <romerogonzaga21@gmail.com> (https://jhonromero.dev)
 - Leonardo Gomez (https://github.com/gomezgleonardob)
 - Ricardo Jara (https://github.com/rvjaraj)
 - Jorge Luis (https://github.com/mestizosdev)

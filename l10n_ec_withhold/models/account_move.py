@@ -1,13 +1,9 @@
-import logging
-
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 from odoo.tools import frozendict
 from odoo.tools.safe_eval import safe_eval
 
 from .data import TAX_SUPPORT
-
-_logger = logging.getLogger(__name__)
 
 
 class AccountMove(models.Model):
@@ -184,22 +180,20 @@ class AccountMove(models.Model):
                     withhold.button_cancel()
         return res
 
-    def action_send_and_print(self):
+    def message_post(self, **kwargs):
+        if self.env.context.get("l10n_ec_mark_as_sent"):
+            self.is_move_sent = True
+        return super().message_post(**kwargs)
+
+    def action_print_pdf(self):
         if any(move.is_purchase_withhold() for move in self):
-            template = self.env.ref(self._get_mail_template(), raise_if_not_found=False)
+            url = "/web/content/{}/{}/{}?download=true"
             return {
-                "name": _("Send"),
-                "type": "ir.actions.act_window",
-                "view_type": "form",
-                "view_mode": "form",
-                "res_model": "account.move.send",
-                "target": "new",
-                "context": {
-                    "active_ids": self.ids,
-                    "default_mail_template_id": template.id,
-                },
+                "type": "ir.actions.act_url",
+                "url": url.format(self._name, self.id, "invoice_pdf_report_file"),
+                "target": "self",
             }
-        return super().action_send_and_print()
+        return super().action_print_pdf()
 
     def get_formview_id(self, access_uid=None):
         if self.is_withhold():
@@ -366,8 +360,8 @@ class AccountMove(models.Model):
         action["views"] = [(view_form_id, "form")]
         action["res_id"] = withhold_ids[0]
         if len(withhold_ids) > 1:
-            action["view_mode"] = "tree,form"
-            action["views"] = [(view_tree_id, "tree"), (view_form_id, "form")]
+            action["view_mode"] = "list,form"
+            action["views"] = [(view_tree_id, "list"), (view_form_id, "form")]
             action["domain"] = [("id", "in", withhold_ids)]
 
         return action

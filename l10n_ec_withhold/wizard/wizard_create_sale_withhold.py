@@ -1,7 +1,7 @@
 import datetime
 import re
 
-from odoo import _, api, fields, models
+from odoo import Command, _, api, fields, models
 from odoo.exceptions import UserError
 from odoo.tools import float_is_zero
 
@@ -157,54 +157,32 @@ class WizardCreateSaleWithhold(models.TransientModel):
         series_number = self.electronic_authorization[24:39]
         return f"{series_number[0:3]}-{series_number[3:6]}-{series_number[6:15]}"
 
+    def _post_link_and_reconcile(self, move, total_by_invoice, account_type):
+        """
+        Postea, linkea a facturas y reconcilia:
+        - account_type: 'liability_payable' (compra) o 'asset_receivable' (venta)
+        """
+        for invoice in total_by_invoice:
+            invoice.write({"l10n_ec_withhold_ids": [Command.link(move.id)]})
+            self._try_reconcile_withholding_moves(move, invoice, account_type)
+        move.line_ids.filtered("tax_ids").write({"l10n_ec_withhold_id": move.id})
+
     def button_validate(self):
         """
-        Create a Sale Withholding and try reconcile with invoice
+        Create a Sale Withholding and try to reconcile with invoice
         """
         self.ensure_one()
         self.validate()
 
-        withholding_vals = self._prepare_withholding_vals()
-        total_by_invoice = {}
-        lines = []
-        for line in self.withhold_line_ids:
-            total_counter = abs(line.withhold_amount)
-            total_by_invoice.setdefault(line.invoice_id, 0.0)
-            total_by_invoice[line.invoice_id] += total_counter
-            taxes_vals = line._get_withholding_line_vals(self)
-            for tax_vals in taxes_vals:
-                lines.append((0, 0, tax_vals))
-        for invoice, total_counter in total_by_invoice.items():
-            move_name = _(
-                "RET: %(document_number)s Invoice: %(invoice_number)s",
-                document_number=self.document_number,
-                invoice_number=invoice.l10n_latam_document_number,
-            )
-            lines.append(
-                (
-                    0,
-                    0,
-                    {
-                        "partner_id": self.partner_id.id,
-                        "account_id": self.partner_id.property_account_receivable_id.id,
-                        "l10n_ec_invoice_withhold_id": invoice.id,
-                        "name": move_name,
-                        "debit": 0.00,
-                        "credit": total_counter,
-                    },
-                )
-            )
-
-        withholding_vals.update({"line_ids": lines})
-        new_withholding = self.env["account.move"].create(withholding_vals)
-        new_withholding.action_post()
-        for invoice in total_by_invoice:
-            invoice.write({"l10n_ec_withhold_ids": [(4, new_withholding.id)]})
-            self._try_reconcile_withholding_moves(
-                new_withholding, invoice, "asset_receivable"
-            )
-        withholding_lines = new_withholding.line_ids.filtered(lambda line: line.tax_ids)
-        withholding_lines.write({"l10n_ec_withhold_id": new_withholding.id})
+        move = self._create_withholding_move()
+        cmds, total_by_invoice = self._build_line_commands(
+            move, counterpart="receivable"
+        )
+        move.write({"line_ids": cmds})
+        move.action_post()
+        self._post_link_and_reconcile(
+            move, total_by_invoice, account_type="asset_receivable"
+        )
         return True
 
 
@@ -219,7 +197,7 @@ class WizardCreateSaleWithholdLine(models.TransientModel):
         ondelete="cascade",
     )
 
-    @api.onchange("invoice_id", "tax_group_withhold_id", "l10n_ec_tax_support")
+    @api.onchange("invoice_id", "tax_group_withhold_id")
     def _onchange_withholding_base(self):
         super()._onchange_withholding_base()
         currency_prec = self.invoice_id.company_id.currency_id.rounding

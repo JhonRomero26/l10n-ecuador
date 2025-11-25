@@ -15,7 +15,6 @@
                             domain="[('type', '=', 'general'), ('l10n_ec_withholding_type', '=', 'purchase')]"
                             options="{'no_create': True}"
                         />
-                        <field name="document_number" readonly="1" />
                         <field name="invoice_id" invisible="1" />
                     </group>
                 </group>
@@ -26,7 +25,7 @@
                             colspan="4"
                             context="{'default_invoice_id': invoice_id}"
                         >
-                            <tree editable="bottom">
+                            <list editable="bottom">
                                 <field
                                     name="invoice_id"
                                     column_invisible="1"
@@ -47,7 +46,7 @@
                                 />
                                 <field name="base_amount" readonly="0" force_save="1" />
                                 <field name="withhold_amount" />
-                            </tree>
+                            </list>
                         </field>
                         <group class="oe_subtotal_footer oe_right">
                             <field

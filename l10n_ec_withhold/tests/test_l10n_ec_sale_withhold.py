@@ -2,8 +2,7 @@ from dateutil.relativedelta import relativedelta
 
 from odoo import _
 from odoo.exceptions import UserError
-from odoo.tests import tagged
-from odoo.tests.common import Form
+from odoo.tests import Form, tagged
 
 from odoo.addons.l10n_ec_account_edi.tests.sri_response import patch_service_sri
 from odoo.addons.l10n_ec_account_edi.tests.test_edi_common import TestL10nECEdiCommon
@@ -12,25 +11,17 @@ from odoo.addons.l10n_ec_account_edi.tests.test_edi_common import TestL10nECEdiC
 @tagged("post_install_l10n", "post_install", "-at_install", "sale_withhold")
 class TestL10nSaleWithhold(TestL10nECEdiCommon):
     @classmethod
-    def setUpClass(
-        cls,
-        chart_template_ref="ec",
-    ):
-        super().setUpClass(chart_template_ref=chart_template_ref)
+    @TestL10nECEdiCommon.setup_chart_template("ec")
+    def setUpClass(cls):
+        super().setUpClass()
         cls.WizardWithhold = cls.env["l10n_ec.wizard.create.sale.withhold"]
         cls.position_no_withhold = cls.env["account.fiscal.position"].create(
             {"name": "Withhold", "l10n_ec_avoid_withhold": True}
         )
-        cls.chart_template = cls.env["account.chart.template"].with_company(cls.company)
-        cls.tax_sale_withhold_vat_50 = cls.chart_template.ref(
-            "tax_sale_withhold_vat_50"
-        )
-        cls.tax_sale_withhold_vat_100 = cls.chart_template.ref(
-            "tax_sale_withhold_vat_100"
-        )
-        cls.tax_sale_withhold_profit_303 = cls.chart_template.ref(
-            "tax_withhold_profit_303"
-        )
+        chart_template = cls.env["account.chart.template"].with_company(cls.company)
+        cls.tax_sale_withhold_vat_50 = chart_template.ref("tax_sale_withhold_vat_50")
+        cls.tax_sale_withhold_vat_100 = chart_template.ref("tax_sale_withhold_vat_100")
+        cls.tax_sale_withhold_profit_303 = chart_template.ref("tax_withhold_profit_303")
 
     @patch_service_sri
     def get_invoice(self, partner):

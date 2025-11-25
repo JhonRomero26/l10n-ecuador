@@ -29,7 +29,7 @@ class AccountEdiDocument(models.Model):
         edi_number = super()._l10n_ec_get_edi_number()
         # withholding save number in field 'ref'
         document = self.l10n_ec_get_current_document()
-        if document.is_purchase_withhold():
+        if document.is_sale_withhold():
             edi_number = document.ref
         return edi_number
 

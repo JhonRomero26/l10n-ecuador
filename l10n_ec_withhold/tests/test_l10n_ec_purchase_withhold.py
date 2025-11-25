@@ -2,9 +2,9 @@ from unittest.mock import patch
 
 from odoo import _
 from odoo.exceptions import UserError
-from odoo.tests import tagged
-from odoo.tests.common import Form
+from odoo.tests import Form, tagged
 
+from odoo.addons.account.tests.test_account_move_send import TestAccountMoveSendCommon
 from odoo.addons.l10n_ec_account_edi.models.account_edi_document import (
     AccountEdiDocument,
 )
@@ -13,13 +13,11 @@ from odoo.addons.l10n_ec_account_edi.tests.test_edi_common import TestL10nECEdiC
 
 
 @tagged("post_install_l10n", "post_install", "-at_install")
-class TestL10nPurchaseWithhold(TestL10nECEdiCommon):
+class TestL10nPurchaseWithhold(TestL10nECEdiCommon, TestAccountMoveSendCommon):
     @classmethod
-    def setUpClass(
-        cls,
-        chart_template_ref="ec",
-    ):
-        super().setUpClass(chart_template_ref=chart_template_ref)
+    @TestL10nECEdiCommon.setup_chart_template("ec")
+    def setUpClass(cls):
+        super().setUpClass()
         cls.WizardWithhold = cls.env["l10n_ec.wizard.create.purchase.withhold"]
         cls.position_no_withhold = cls.env["account.fiscal.position"].create(
             {"name": "Withhold", "l10n_ec_avoid_withhold": True}
@@ -28,14 +26,12 @@ class TestL10nPurchaseWithhold(TestL10nECEdiCommon):
             {"name": "Withhold", "l10n_ec_avoid_withhold": False}
         )
         cls.company.property_account_position_id = cls.position_require_withhold
-        cls.chart_template = cls.env["account.chart.template"].with_company(cls.company)
-        cls.tax_vat = cls.chart_template.ref("tax_vat_510_sup_01")
-        cls.tax_withhold_vat_100 = cls.chart_template.ref("tax_withhold_vat_100")
-        cls.tax_withhold_profit_303 = cls.chart_template.ref("tax_withhold_profit_303")
-        cls.journal_purchase_withhold = cls.chart_template.ref("purchase_withhold_ec")
-        cls.journal_purchase_withhold.l10n_ec_emission_address_id = (
-            cls.partner_contact.id
-        )
+        chart_template = cls.env["account.chart.template"].with_company(cls.company)
+        cls.tax_vat = chart_template.ref("tax_vat_510_sup_01")
+        cls.tax_withhold_vat_100 = chart_template.ref("tax_withhold_vat_100")
+        cls.tax_withhold_profit_303 = chart_template.ref("tax_withhold_profit_303")
+        cls.journal_purchase_withhold = chart_template.ref("purchase_withhold_ec")
+        cls.journal_purchase_withhold.l10n_ec_emission_address_id = cls.partner_contact
 
     def _prepare_new_wizard_withhold_purchase(
         self,
@@ -53,15 +49,17 @@ class TestL10nPurchaseWithhold(TestL10nECEdiCommon):
                 if tax_support:
                     line.l10n_ec_tax_support = tax_support
 
+        invoice = invoices[0]
         wizard = Form(
             self.WizardWithhold.with_context(
-                active_ids=invoices.ids, default_partner_id=invoices.partner_id.id
+                active_model="account.move",
+                active_ids=invoices.ids,
+                default_partner_id=invoice.partner_id.id,
             )
         )
-        invoice = invoices[0]
         wizard.issue_date = invoice.invoice_date
-        wizard.journal_id = invoice.journal_id
         wizard.journal_id = self.journal_purchase_withhold
+
         if tax_withhold_vat:
             add_line(tax_withhold_vat, tax_support=tax_support_withhold_vat)
         if tax_withhold_profit:
@@ -178,6 +176,9 @@ class TestL10nPurchaseWithhold(TestL10nECEdiCommon):
 
     @patch_service_sri
     def test_05_l10n_ec_new_electronic_withhold(self):
+        self.env.user.write({"email": "test@example.com"})
+        self.env.user.partner_id.write({"email": "test@example.com"})
+        self.company.partner_id.write({"email": "info@company.com"})
         self._setup_edi_company_ec()
         self.partner_ruc.property_account_position_id = self.position_require_withhold
         invoice_form = self._l10n_ec_create_form_move(
@@ -222,13 +223,8 @@ class TestL10nPurchaseWithhold(TestL10nECEdiCommon):
             withhold.l10n_ec_authorization_date, edi_doc.l10n_ec_authorization_date
         )
         # Envio de email
-        report_action = withhold.with_context(
-            discard_logo_check=True
-        ).action_invoice_sent()
-        WizardMoveSend = self.env["account.move.send"].with_context(
-            active_model=withhold._name, **report_action["context"]
-        )
-        WizardMoveSend.create({}).action_send_and_print()
+        wizard_send = self.create_send_and_print(withhold)
+        wizard_send.action_send_and_print()
         self.assertTrue(withhold.is_move_sent)
         # show withholding related
         action_withhold = invoice.action_show_l10n_ec_withholds()
