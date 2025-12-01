@@ -1,66 +1,50 @@
-<?xml version="1.0" ?>
+<?xml version="1.0"?>
 <odoo>
-    <record id="partner_form_view_ec" model="ir.ui.view">
-        <field name="name">Partner Form OTE Inherit</field>
-        <field name="model">res.partner</field>
-        <field name="priority">1000</field>
-        <field name="inherit_id" ref="base.view_partner_form" />
-        <field name="arch" type="xml">
-            <!-- Add Canton and Parish to the main address -->
-            <xpath expr="//field[@name='country_id']" position="attributes">
-                <attribute name="class">o_address_city</attribute>
-            </xpath>
-            <xpath expr="//field[@name='country_id']" position="after">
-                <field
-                    name="canton_id"
-                    placeholder="Canton"
-                    class="o_address_state"
-                    domain="[('state_id', '=', state_id)]"
-                    context="{'state_id': state_id}"
-                    options='{"no_open": True, "no_create": True}'
-                    invisible="partner_country_code != 'EC'"
-                />
-                <field
-                    name="parish_id"
-                    placeholder="Parish"
-                    class="o_address_zip"
-                    domain="[('canton_id', '=', canton_id)]"
-                    context="{'canton_id': canton_id}"
-                    options='{"no_open": True, "no_create": True}'
-                    invisible="partner_country_code != 'EC'"
-                />
-            </xpath>
+    <data>
+        <record id="partner_form_view_ec" model="ir.ui.view">
+            <field name="name">Partner Form OTE Inherit</field>
+            <field name="model">res.partner</field>
+            <field name="priority">1000</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <!-- Add Canton and Parish to the main address -->
+                <xpath expr="//field[@name='country_id']" position="attributes">
+                    <attribute name="class">o_address_city</attribute>
+                </xpath>
+                <xpath expr="//field[@name='country_id']" position="after">
+                       <field   name="canton_id" placeholder="Canton"
+                                class="o_address_state"
+                                domain="[('state_id', '=', state_id)]"
+                                context="{'state_id': state_id}"
+                                options='{"no_open": True, "no_create": True}'
+                                invisible="partner_country_code != 'EC'"/>
+                        <field  name="parish_id" placeholder="Parish"
+                                class="o_address_zip"
+                                domain="[('canton_id', '=', canton_id)]"
+                                context="{'canton_id': canton_id}"
+                                options='{"no_open": True, "no_create": True}'
+                                invisible="partner_country_code != 'EC'"/>
+                </xpath>
 
-            <!-- Add Canton and Parish to the contact addresses -->
-            <xpath
-                expr="//field[@name='child_ids']//group//field[@name='country_id']"
-                position="attributes"
-            >
-                <attribute name="class">o_address_city</attribute>
-            </xpath>
-            <xpath
-                expr="//field[@name='child_ids']//group//field[@name='country_id']"
-                position="after"
-            >
-                <field
-                    name="canton_id"
-                    placeholder="Canton"
-                    class="o_address_state"
-                    domain="[('state_id', '=', state_id)]"
-                    context="{'state_id': state_id}"
-                    options='{"no_open": True, "no_create": True}'
-                    invisible="partner_country_code != 'EC'"
-                />
-                <field
-                    name="parish_id"
-                    placeholder="Parish"
-                    class="o_address_zip"
-                    domain="[('canton_id', '=', canton_id)]"
-                    context="{'canton_id': canton_id}"
-                    options='{"no_open": True, "no_create": True}'
-                    invisible="partner_country_code != 'EC'"
-                />
-            </xpath>
-        </field>
-    </record>
+                <!-- Add Canton and Parish to the contact addresses -->
+                <xpath expr="//field[@name='child_ids']//group//field[@name='country_id']" position="attributes">
+                    <attribute name="class">o_address_city</attribute>
+                </xpath>
+                <xpath expr="//field[@name='child_ids']//group//field[@name='country_id']" position="after">
+                        <field  name="canton_id" placeholder="Canton"
+                                class="o_address_state"
+                                domain="[('state_id', '=', state_id)]"
+                                context="{'state_id': state_id}"
+                                options='{"no_open": True, "no_create": True}'
+                                invisible="partner_country_code != 'EC'"/>
+                        <field  name="parish_id" placeholder="Parish"
+                                class="o_address_zip"
+                                domain="[('canton_id', '=', canton_id)]"
+                                context="{'canton_id': canton_id}"
+                                options='{"no_open": True, "no_create": True}'
+                                invisible="partner_country_code != 'EC'"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
 </odoo>
