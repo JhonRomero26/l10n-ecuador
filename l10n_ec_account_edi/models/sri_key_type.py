@@ -1,8 +1,12 @@
 import logging
+import subprocess
 from base64 import b64decode
 from random import randrange
+from tempfile import NamedTemporaryFile
 
 import xmlsig  # pylint: disable=W7936
+from cryptography import x509 as crypto_x509  # pylint: disable=W7936
+from cryptography.hazmat.primitives import serialization  # pylint: disable=W7936
 from cryptography.hazmat.primitives.serialization import pkcs12  # pylint: disable=W7936
 from cryptography.x509 import ExtensionNotFound  # pylint: disable=W7936
 from cryptography.x509.oid import ExtensionOID, NameOID  # pylint: disable=W7936
@@ -15,6 +19,77 @@ from odoo.exceptions import UserError
 from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
+
+# Commands to extract key and certificate from PKCS#12
+# using OpenSSL with legacy support
+# The -legacy flag is required for certificates using
+# older algorithms (e.g., BCE certificates)
+KEY_TO_PEM_CMD = (
+    "openssl pkcs12 -nocerts -in %s -out %s -legacy -passin pass:%s -passout pass:%s"
+)
+CERT_TO_PEM_CMD = (
+    "openssl pkcs12 -clcerts -nokeys -in %s -out %s -legacy -passin pass:%s"
+)
+
+
+def convert_key_cer_to_pem(key, password):
+    """
+    Convert PKCS#12 key to PEM format using OpenSSL command.
+
+    This function uses the OpenSSL command-line tool with the -legacy flag
+    to support certificates that use older encryption algorithms (such as
+    those from BCE - Banco Central del Ecuador).
+
+    Args:
+        key: Binary content of the PKCS#12 file
+        password: Password for the PKCS#12 file
+
+    Returns:
+        str: Private key in PEM format
+    """
+    with (
+        NamedTemporaryFile(
+            "wb", suffix=".p12", prefix="edi.ec.tmp.", delete=False
+        ) as p12_file,
+        NamedTemporaryFile(
+            "r", suffix=".pem", prefix="edi.ec.tmp.", delete=False
+        ) as pem_file,
+    ):
+        p12_file.write(key)
+        p12_file.flush()
+        command = KEY_TO_PEM_CMD % (p12_file.name, pem_file.name, password, password)
+        subprocess.call(command.split())
+        pem_file.seek(0)
+        key_pem = pem_file.read()
+    return key_pem
+
+
+def convert_cert_to_pem(p12_content, password):
+    """
+    Extract certificate from PKCS#12 to PEM format using OpenSSL command.
+
+    Args:
+        p12_content: Binary content of the PKCS#12 file
+        password: Password for the PKCS#12 file
+
+    Returns:
+        str: Certificate in PEM format
+    """
+    with (
+        NamedTemporaryFile(
+            "wb", suffix=".p12", prefix="edi.ec.tmp.", delete=False
+        ) as p12_file,
+        NamedTemporaryFile(
+            "r", suffix=".pem", prefix="edi.ec.tmp.", delete=False
+        ) as pem_file,
+    ):
+        p12_file.write(p12_content)
+        p12_file.flush()
+        command = CERT_TO_PEM_CMD % (p12_file.name, pem_file.name, password)
+        subprocess.call(command.split())
+        pem_file.seek(0)
+        cert_pem = pem_file.read()
+    return cert_pem
 
 
 class SriKeyType(models.Model):
@@ -54,23 +129,54 @@ class SriKeyType(models.Model):
 
     @tools.ormcache("self.id", "self.write_date", "self.password")
     def _decode_certificate(self):
+        """
+        Decode PKCS#12 certificate and extract private key and certificates.
+
+        This method first attempts to load the certificate using the cryptography
+        library. If that fails (e.g., for certificates using legacy algorithms like
+        those from BCE - Banco Central del Ecuador), it falls back to using OpenSSL
+        with the -legacy flag.
+
+        Returns:
+            tuple: (private_key, certificate, other_certificates)
+
+        Raises:
+            UserError: If the certificate cannot be loaded or is invalid.
+        """
         self.ensure_one()
         if not self.file_content or not self.password:
             raise UserError(_("Certificate/password not provided."))
 
         file_content = b64decode(self.file_content)
+        password_bytes = self.password.encode("utf-8")
+        private_key = None
+        cert = None
+        other_certs = None
+
+        # First, try to load using cryptography library (modern certificates)
         try:
             private_key, cert, other_certs = pkcs12.load_key_and_certificates(
-                file_content, self.password.encode("utf-8")
+                file_content, password_bytes
             )
         except Exception as ex:
-            _logger.warning(f"PKCS#12 load failed: {ex}")
-            raise UserError(
-                _(
-                    "Error opening the signature. Wrong password or unsupported file.\n"
-                    f"{ex}"
+            _logger.warning(
+                "PKCS#12 load with cryptography failed, trying OpenSSL legacy: %s", ex
+            )
+            try:
+                private_key, cert, other_certs = self._decode_certificate_legacy(
+                    file_content, password_bytes
                 )
-            ) from None
+            except Exception as legacy_ex:
+                _logger.error("Both cryptography and OpenSSL legacy load failed")
+                raise UserError(
+                    _(
+                        "Error opening the signature. Wrong password or "
+                        "unsupported file.\n"
+                        "Cryptography error: %(crypto_error)s\n"
+                        "OpenSSL legacy error: %(openssl_error)s"
+                    )
+                    % {"crypto_error": str(ex), "openssl_error": str(legacy_ex)}
+                ) from None
 
         if private_key is None or cert is None:
             raise UserError(
@@ -91,6 +197,63 @@ class SriKeyType(models.Model):
                     break
 
         return (private_key, cert, other_certs or [])
+
+    def _decode_certificate_legacy(self, file_content, password_bytes):
+        """
+        Decode PKCS#12 certificate using OpenSSL command with -legacy flag.
+
+        This method is used as a fallback for certificates that use older
+        encryption algorithms not supported by the cryptography library
+        (e.g., BCE certificates from Banco Central del Ecuador).
+
+        Args:
+            file_content: Binary content of the PKCS#12 file
+            password_bytes: Password as bytes
+
+        Returns:
+            tuple: (private_key, certificate, other_certificates)
+        """
+        password = password_bytes.decode("utf-8")
+
+        # Extract private key using OpenSSL with -legacy flag
+        private_key_str = convert_key_cer_to_pem(file_content, password)
+
+        # When the file has multiple electronic signatures,
+        # it comes with several sections with BEGIN ENCRYPTED PRIVATE KEY
+        # differentiated by:
+        # * Decryption Key
+        # * Signing Key
+        # so take from Signing Key if it exists
+        start_index = private_key_str.find("Signing Key")
+        if start_index >= 0:
+            private_key_str = private_key_str[start_index:]
+
+        start_index = private_key_str.find("-----BEGIN ENCRYPTED PRIVATE KEY-----")
+        if start_index < 0:
+            raise UserError(_("Could not find private key in certificate."))
+
+        private_key_str = private_key_str[start_index:]
+        private_key = serialization.load_pem_private_key(
+            private_key_str.encode(),
+            password_bytes,
+        )
+
+        # Extract certificate using OpenSSL with -legacy flag
+        cert_pem_str = convert_cert_to_pem(file_content, password)
+
+        # Find the certificate in PEM format
+        start_index = cert_pem_str.find("-----BEGIN CERTIFICATE-----")
+        if start_index < 0:
+            raise UserError(_("Could not find certificate in file."))
+
+        cert_pem_str = cert_pem_str[start_index:]
+        cert = crypto_x509.load_pem_x509_certificate(cert_pem_str.encode())
+
+        # For legacy method, we don't extract additional certificates
+        # as they are typically not needed for signing
+        other_certs = []
+
+        return (private_key, cert, other_certs)
 
     def action_validate_and_load(self):
         decoded = self._decode_certificate()
