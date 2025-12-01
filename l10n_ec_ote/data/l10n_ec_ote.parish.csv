@@ -603,8 +603,11 @@
 "parish_110102","canton_1101","110102","San Sebastian"
 "parish_110103","canton_1101","110103","Sucre"
 "parish_110104","canton_1101","110104","Valle"
+<<<<<<< HEAD
 "parish_110105","canton_1101","110105","Punzara"
 "parish_110106","canton_1101","110106","Carigán"
+=======
+>>>>>>> c48ee59 ([MIG] l10n_ec_ote: migrate to 18.0 with enhanced localization features)
 "parish_110150","canton_1101","110150","Loja"
 "parish_110151","canton_1101","110151","Chantaco"
 "parish_110152","canton_1101","110152","Chuquiribamba"
@@ -619,6 +622,10 @@
 "parish_110161","canton_1101","110161","Vilcabamba (Victoria)"
 "parish_110162","canton_1101","110162","Yangana (Arsenio Castillo)"
 "parish_110163","canton_1101","110163","Quinara"
+<<<<<<< HEAD
+=======
+"parish_110164","canton_1101","110164","Punzara"
+>>>>>>> c48ee59 ([MIG] l10n_ec_ote: migrate to 18.0 with enhanced localization features)
 "parish_110201","canton_1102","110201","Cariamanga"
 "parish_110202","canton_1102","110202","Chile"
 "parish_110203","canton_1102","110203","San Vicente"
