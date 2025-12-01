@@ -1,0 +1,137 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* l10n_ec_ote
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-12-01 21:06+0000\n"
+"PO-Revision-Date: 2025-12-01 21:06+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: l10n_ec_ote
+#: model:ir.model,name:l10n_ec_ote.model_res_partner
+msgid "Add Canton and Parish fields to partner"
+msgstr "Añadir campos de Cantón y Parroquia al contacto"
+
+#. module: l10n_ec_ote
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_canton__name
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_parish__canton_id
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_res_partner__canton_id
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_res_users__canton_id
+#: model_terms:ir.ui.view,arch_db:l10n_ec_ote.partner_form_view_ec
+msgid "Canton"
+msgstr "Cantón"
+
+#. module: l10n_ec_ote
+#: model:ir.model,name:l10n_ec_ote.model_l10n_ec_ote_canton
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_res_country_state__canton_ids
+msgid "Cantons"
+msgstr "Cantones"
+
+#. module: l10n_ec_ote
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_canton__code
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_parish__code
+msgid "Code"
+msgstr "Código"
+
+#. module: l10n_ec_ote
+#: model:ir.model,name:l10n_ec_ote.model_res_country_state
+msgid "Country state"
+msgstr "Provincia"
+
+#. module: l10n_ec_ote
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_canton__create_uid
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_parish__create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: l10n_ec_ote
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_canton__create_date
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_parish__create_date
+msgid "Created on"
+msgstr "Fecha de creación"
+
+#. module: l10n_ec_ote
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_canton__display_name
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_parish__display_name
+msgid "Display Name"
+msgstr "Nombre a mostrar"
+
+#. module: l10n_ec_ote
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_canton__id
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_parish__id
+msgid "ID"
+msgstr "ID"
+
+#. module: l10n_ec_ote
+#. odoo-python
+#: code:addons/l10n_ec_ote/models/res_partner.py:0
+msgid "Invalid Selection"
+msgstr "Selección Inválida"
+
+#. module: l10n_ec_ote
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_canton__write_uid
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_parish__write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: l10n_ec_ote
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_canton__write_date
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_parish__write_date
+msgid "Last Updated on"
+msgstr "Última fecha de actualización"
+
+#. module: l10n_ec_ote
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_parish__name
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_res_partner__parish_id
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_res_users__parish_id
+#: model_terms:ir.ui.view,arch_db:l10n_ec_ote.partner_form_view_ec
+msgid "Parish"
+msgstr "Parroquia"
+
+#. module: l10n_ec_ote
+#: model:ir.model,name:l10n_ec_ote.model_l10n_ec_ote_parish
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_canton__parish_ids
+msgid "Parishes"
+msgstr "Parroquias"
+
+#. module: l10n_ec_ote
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_res_partner__partner_country_code
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_res_users__partner_country_code
+msgid "Partner Country Code"
+msgstr "Código de País del Contacto"
+
+#. module: l10n_ec_ote
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_canton__state_id
+msgid "Province"
+msgstr "Provincia"
+
+#. module: l10n_ec_ote
+#: model:ir.model.fields,help:l10n_ec_ote.field_res_partner__partner_country_code
+#: model:ir.model.fields,help:l10n_ec_ote.field_res_users__partner_country_code
+msgid ""
+"The ISO country code in two chars. \n"
+"You can use this field for quick search."
+msgstr ""
+"El código ISO de país en dos caracteres. \n"
+"Puede usar este campo para una búsqueda rápida."
+
+#. module: l10n_ec_ote
+#. odoo-python
+#: code:addons/l10n_ec_ote/models/res_partner.py:0
+msgid "The selected canton does not belong to the selected province."
+msgstr "El cantón seleccionado no pertenece a la provincia seleccionada."
+
+#. module: l10n_ec_ote
+#. odoo-python
+#: code:addons/l10n_ec_ote/models/res_partner.py:0
+msgid "The selected parish does not belong to the selected canton."
+msgstr "La parroquia seleccionada no pertenece al cantón seleccionado."
+
