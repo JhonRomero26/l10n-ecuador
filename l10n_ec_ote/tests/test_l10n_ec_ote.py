@@ -16,9 +16,13 @@ class TestL10nEcOte(TransactionCase):
         cls.parish_bellavista = cls.env.ref("l10n_ec_ote.parish_010101")
 
         # Another canton and its parishes for testing purposes
-        cls.canton_giron = cls.env.ref("l10n_ec_ote.canton_0102") # Giron
-        cls.parish_giron_urbana = cls.env.ref("l10n_ec_ote.parish_010250") # Giron (suffix 50)
-        cls.parish_giron_rural_asuncion = cls.env.ref("l10n_ec_ote.parish_010251") # Asuncion (suffix 51)
+        cls.canton_giron = cls.env.ref("l10n_ec_ote.canton_0102")  # Giron
+        cls.parish_giron_urbana = cls.env.ref(
+            "l10n_ec_ote.parish_010250"
+        )  # Giron (suffix 50)
+        cls.parish_giron_rural_asuncion = cls.env.ref(
+            "l10n_ec_ote.parish_010251"
+        )  # Asuncion (suffix 51)
 
         cls.partner = cls.env["res.partner"].create(
             {
@@ -57,11 +61,13 @@ class TestL10nEcOte(TransactionCase):
 
     def test_partner_fields_assignment(self):
         """Test assigning canton and parish to a partner."""
-        self.partner.write({
-            'state_id': self.state_azuay.id,
-            'canton_id': self.canton_cuenca.id,
-            'parish_id': self.parish_bellavista.id,
-        })
+        self.partner.write(
+            {
+                "state_id": self.state_azuay.id,
+                "canton_id": self.canton_cuenca.id,
+                "parish_id": self.parish_bellavista.id,
+            }
+        )
         self.assertEqual(self.partner.state_id, self.state_azuay)
         self.assertEqual(self.partner.canton_id, self.canton_cuenca)
         self.assertEqual(self.partner.parish_id, self.parish_bellavista)
@@ -69,24 +75,25 @@ class TestL10nEcOte(TransactionCase):
     def test_domain_on_parish(self):
         """Check that parish domain is correctly limited by the canton."""
         # A partner in canton 'Cuenca' should only see parishes from 'Cuenca'.
-        partner = self.env['res.partner'].create({
-            'name': 'Partner in Cuenca',
-            'country_id': self.env.ref('base.ec').id,
-            'state_id': self.state_azuay.id,
-            'canton_id': self.canton_cuenca.id,
-        })
+        partner = self.env["res.partner"].create(
+            {
+                "name": "Partner in Cuenca",
+                "country_id": self.env.ref("base.ec").id,
+                "state_id": self.state_azuay.id,
+                "canton_id": self.canton_cuenca.id,
+            }
+        )
 
         # In a form view context, the domain on `parish_id` would be something like
         # `[('canton_id', '=', canton_id)]`.
         # We can simulate this by searching with the domain.
-        parishes_in_domain = self.env['l10n_ec_ote.parish'].search([
-            ('canton_id', '=', partner.canton_id.id)
-        ])
+        parishes_in_domain = self.env["l10n_ec_ote.parish"].search(
+            [("canton_id", "=", partner.canton_id.id)]
+        )
 
         self.assertIn(self.parish_bellavista, parishes_in_domain)
 
         # Check a parish from another canton is not in the list
-        canton_giron = self.env.ref("l10n_ec_ote.canton_0102")
         parish_giron = self.env.ref("l10n_ec_ote.parish_010250")
         self.assertNotIn(parish_giron, parishes_in_domain)
 
@@ -103,7 +110,7 @@ class TestL10nEcOte(TransactionCase):
 
         self.partner.state_id = False
         self.partner._onchange_location_set_city()
-        self.assertEqual(self.partner.city, '')
+        self.assertEqual(self.partner.city, "")
 
     def test_onchange_city_parish_suffix_ge_50(self):
         """Test city is parish name when parish code suffix >= 50."""
@@ -133,7 +140,9 @@ class TestL10nEcOte(TransactionCase):
         self.partner.parish_id = self.parish_bellavista
         self.partner._onchange_location_set_city()
         # The city should remain the canton's urban parish name
-        self.assertEqual(self.partner.city, self.env.ref("l10n_ec_ote.parish_010150").name)
+        self.assertEqual(
+            self.partner.city, self.env.ref("l10n_ec_ote.parish_010150").name
+        )
 
     def test_onchange_city_canton_only_urban_parish(self):
         """Test city is urban parish name when only canton is set
@@ -141,10 +150,12 @@ class TestL10nEcOte(TransactionCase):
         # Cuenca has an urban parish (l10n_ec_ote.parish_010150 which is "Cuenca")
         self.partner.state_id = self.state_azuay
         self.partner.canton_id = self.canton_cuenca
-        self.partner.parish_id = False # Ensure no parish is set
+        self.partner.parish_id = False  # Ensure no parish is set
         self.partner._onchange_location_set_city()
         # The urban parish for Cuenca (canton_0101) is "Cuenca" (parish_010150)
-        self.assertEqual(self.partner.city, self.env.ref("l10n_ec_ote.parish_010150").name)
+        self.assertEqual(
+            self.partner.city, self.env.ref("l10n_ec_ote.parish_010150").name
+        )
 
     def test_onchange_city_state_only(self):
         """Test city is first canton name when only state is set."""
