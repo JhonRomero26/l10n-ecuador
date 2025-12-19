@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2025 Odoo Community Association (OCA)
+     License LGPL-3 - See https://www.gnu.org/licenses/lgpl-3.0.html -->
+<odoo>
+    <!--
+      POS needs the map_picker field widget registered in its asset bundle.
+      This view is intentionally minimal; it forces the widget on map_picker_data
+      in partner forms used in POS contexts.
+
+      If POS already uses widget="map_picker" in the reused form, this is harmless.
+    -->
+
+    <record id="res_partner_form_view_inherit_pos_map_picker" model="ir.ui.view">
+        <field name="name">res.partner.form.pos.map_picker</field>
+        <field name="model">res.partner</field>
+        <!-- Inherit the partner form from l10n_ec_partner_geo, which adds map_picker_data -->
+        <field
+            name="inherit_id"
+            ref="l10n_ec_partner_geo.view_partner_form_geolocation_ec"
+        />
+        <field name="arch" type="xml">
+            <field name="map_picker_data" position="attributes">
+                <attribute name="widget">map_picker</attribute>
+            </field>
+        </field>
+    </record>
+</odoo>
