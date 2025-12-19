@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <!-- Override base_geolocalize view to change page string -->
+    <record id="base_geolocalize_partner_page_string_override" model="ir.ui.view">
+        <field name="name">base.geolocalize.partner.page.string.override</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base_geolocalize.view_crm_partner_geo_form" />
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='geo_location']" position="replace">
+                <page string="Geolocation" name="geo_location">
+                    <group name="container_row_2">
+                        <group string="Geolocation" name="Geolocation" priority="1">
+                            <label for="date_localization" string="Geo Location" />
+                            <div>
+                                <span>Lat : <field
+                                    name="partner_latitude"
+                                    nolabel="1"
+                                    class="oe_inline"
+                                /></span>
+                                <br />
+                                <span>Long: <field
+                                    name="partner_longitude"
+                                    nolabel="1"
+                                    class="oe_inline"
+                                /></span>
+                                <br />
+                                <span invisible="not date_localization">Updated on:
+                                    <field
+                                    name="date_localization"
+                                    nolabel="1"
+                                    readonly="1"
+                                    class="oe_inline"
+                                />
+                                    <br />
+                                </span>
+                            </div>
+                        </group>
+                        <group string="Map Selection" name="map_selection" priority="2">
+                            <div>
+                                <div class="d-flex text-muted mb-2">
+                                    <strong
+                                        style="margin-right: 8px;"
+                                    >Geographic Precision Level:</strong>
+                                    <span style="color: blue; font-weight: bold;">
+                                        <field name="precision_level" readonly="True" />
+                                    </span>
+                                </div>
+                                <field
+                                    name="map_picker_data"
+                                    widget="map_picker"
+                                    nolabel="1"
+                                />
+                            </div>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_partner_form_geolocation_ec" model="ir.ui.view">
+        <field name="name">res.partner.form.geolocation.ec</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form" />
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='comment']/parent::group" position="before">
+                <group name="container_row_2">
+                    <group string="Geolocation" name="Geolocation" priority="1">
+                        <label for="date_localization" string="Geo Location" />
+                        <div>
+                            <span>Lat : <field
+                                name="partner_latitude"
+                                nolabel="1"
+                                class="oe_inline"
+                            /></span>
+                            <br />
+                            <span>Long: <field
+                                name="partner_longitude"
+                                nolabel="1"
+                                class="oe_inline"
+                            /></span>
+                            <br />
+                            <span invisible="not date_localization">Updated on:
+                                <field
+                                name="date_localization"
+                                nolabel="1"
+                                readonly="1"
+                                class="oe_inline"
+                            />
+                                <br />
+                            </span>
+                        </div>
+                    </group>
+                    <group string="Map Selection" name="map_selection" priority="2">
+                        <div>
+                            <div class="d-flex text-muted mb-2">
+                                <strong
+                                    style="margin-right: 8px;"
+                                >Geographic Precision Level:</strong>
+                                <span style="color: blue; font-weight: bold;">
+                                    <field name="precision_level" readonly="True" />
+                                </span>
+                            </div>
+                            <field
+                                name="map_picker_data"
+                                widget="map_picker"
+                                nolabel="1"
+                            />
+                        </div>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
