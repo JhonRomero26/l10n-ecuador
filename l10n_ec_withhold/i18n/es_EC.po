@@ -143,7 +143,7 @@ msgstr ""
 #. module: l10n_ec_withhold
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.account_invoice_custom_view
 msgid "<span class=\"o_stat_text\">Withholding</span>"
-msgstr ""
+msgstr "<span class=\"o_stat_text\">Retención</span>"
 
 #. module: l10n_ec_withhold
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.e_withhold_document_body
