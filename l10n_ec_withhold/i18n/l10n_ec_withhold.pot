@@ -4,7 +4,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 17.0\n"
+"Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -166,69 +166,69 @@ msgstr ""
 #. module: l10n_ec_withhold
 #: model:ir.model,name:l10n_ec_withhold.model_l10n_ec_wizard_abstract_withhold
 msgid "Abstract Withhold Wizard"
-msgstr ""
+msgstr "Asistente para retención de resúmenes"
 
 #. module: l10n_ec_withhold
 #: model:ir.model,name:l10n_ec_withhold.model_account_chart_template
 msgid "Account Chart Template"
-msgstr ""
+msgstr "Plantilla de gráfico de cuenta"
 
 #. module: l10n_ec_withhold
 #: model:ir.model,name:l10n_ec_withhold.model_account_move_send
 msgid "Account Move Send"
-msgstr ""
+msgstr "Enviar movimiento de cuenta"
 
 #. module: l10n_ec_withhold
 #. odoo-python
 #: code:addons/l10n_ec_withhold/wizard/wizard_l10n_ec_abstract_withhold.py:0
 #, python-format
 msgid "Account type not supported, this must be receivable or payable"
-msgstr ""
+msgstr "Tipo de cuenta no compatible, debe ser por cobrar o por pagar"
 
 #. module: l10n_ec_withhold
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.account_invoice_custom_view
 msgid "Add Withholding"
-msgstr ""
+msgstr "Agregar retención"
 
 #. module: l10n_ec_withhold
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.view_account_move_withhold_form
 msgid "Add an internal note..."
-msgstr ""
+msgstr "Añadir una nota interna..."
 
 #. module: l10n_ec_withhold
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_abstract_withhold_line__base_amount
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_purchase_withhold_line__base_amount
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_sale_withhold_line__base_amount
 msgid "Amount Base"
-msgstr ""
+msgstr "Base de importe"
 
 #. module: l10n_ec_withhold
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_abstract_withhold_line__withhold_amount
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_purchase_withhold_line__withhold_amount
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_sale_withhold_line__withhold_amount
 msgid "Amount Withhold"
-msgstr ""
+msgstr "Cantidad retenida"
 
 #. module: l10n_ec_withhold
 #. odoo-python
 #: code:addons/l10n_ec_withhold/wizard/wizard_create_sale_withhold.py:0
 #, python-format
 msgid "Authorization is not valid. Should be length equal to 10 or 49"
-msgstr ""
+msgstr "La autorización no es válida. Debe tener una longitud igual a 10 o 49 caracteres."
 
 #. module: l10n_ec_withhold
 #. odoo-python
 #: code:addons/l10n_ec_withhold/wizard/wizard_create_sale_withhold.py:0
 #, python-format
 msgid "Authorization number not correspond to a withhold"
-msgstr ""
+msgstr "Número de autorización no corresponde a una retención"
 
 #. module: l10n_ec_withhold
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_account_fiscal_position__l10n_ec_avoid_withhold
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_res_partner__l10n_ec_avoid_withhold
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_res_users__l10n_ec_avoid_withhold
 msgid "Avoid Withholding?"
-msgstr ""
+msgstr "¿Evitar la retención?"
 
 #. module: l10n_ec_withhold
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.e_withhold_document_body
@@ -239,7 +239,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.l10n_ec_wizard_purchase_withhold_form_view
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.l10n_ec_wizard_sale_withhold_form_view
 msgid "Cancel"
-msgstr ""
+msgstr "Cancelar"
 
 #. module: l10n_ec_withhold
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.e_withhold_document_body
@@ -249,25 +249,25 @@ msgstr ""
 #. module: l10n_ec_withhold
 #: model:ir.model,name:l10n_ec_withhold.model_res_partner
 msgid "Contact"
-msgstr ""
+msgstr "Contacto"
 
 #. module: l10n_ec_withhold
 #. odoo-python
 #: code:addons/l10n_ec_withhold/wizard/wizard_l10n_ec_abstract_withhold.py:0
 #, python-format
 msgid "Counterpart RET %s"
-msgstr ""
+msgstr "Contraparte RET %s"
 
 #. module: l10n_ec_withhold
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.l10n_ec_wizard_purchase_withhold_form_view
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.l10n_ec_wizard_sale_withhold_form_view
 msgid "Create Withhold"
-msgstr ""
+msgstr "Crear retención"
 
 #. module: l10n_ec_withhold
 #: model:ir.actions.server,name:l10n_ec_withhold.action_sale_withhold
 msgid "Create withholding"
-msgstr ""
+msgstr "Crear retención"
 
 #. module: l10n_ec_withhold
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_purchase_withhold__create_uid
@@ -275,7 +275,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_sale_withhold__create_uid
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_sale_withhold_line__create_uid
 msgid "Created by"
-msgstr ""
+msgstr "Creado por"
 
 #. module: l10n_ec_withhold
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_purchase_withhold__create_date
@@ -283,19 +283,19 @@ msgstr ""
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_sale_withhold__create_date
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_sale_withhold_line__create_date
 msgid "Created on"
-msgstr ""
+msgstr "Creado el"
 
 #. module: l10n_ec_withhold
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.view_account_move_withhold_form
 msgid "Customer"
-msgstr ""
+msgstr "Cliente"
 
 #. module: l10n_ec_withhold
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_abstract_withhold__issue_date
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_purchase_withhold__issue_date
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_sale_withhold__issue_date
 msgid "Date"
-msgstr ""
+msgstr "Fecha"
 
 #. module: l10n_ec_withhold
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_purchase_withhold__display_name
@@ -303,26 +303,26 @@ msgstr ""
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_sale_withhold__display_name
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_sale_withhold_line__display_name
 msgid "Display Name"
-msgstr ""
+msgstr "Nombre para mostrar"
 
 #. module: l10n_ec_withhold
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_abstract_withhold__document_number
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_purchase_withhold__document_number
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_sale_withhold__document_number
 msgid "Document Number"
-msgstr ""
+msgstr "Número de documento"
 
 #. module: l10n_ec_withhold
 #: model:ir.model,name:l10n_ec_withhold.model_account_edi_format
 msgid "EDI format"
-msgstr ""
+msgstr "Formato EDI"
 
 #. module: l10n_ec_withhold
 #. odoo-python
 #: code:addons/l10n_ec_withhold/wizard/wizard_create_sale_withhold.py:0
 #, python-format
 msgid "Ecuadorian Document %s must be like 001-001-123456789"
-msgstr ""
+msgstr "El documento ecuatoriano %s debe ser como 001-001-123456789"
 
 #. module: l10n_ec_withhold
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.e_withhold_document_body
@@ -334,12 +334,12 @@ msgstr ""
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_purchase_withhold__electronic_authorization
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_sale_withhold__electronic_authorization
 msgid "Electronic Authorization"
-msgstr ""
+msgstr "Autorización electrónica"
 
 #. module: l10n_ec_withhold
 #: model:ir.model,name:l10n_ec_withhold.model_account_edi_document
 msgid "Electronic Document for an account.move"
-msgstr ""
+msgstr "Documento electrónico para un traslado de cuenta"
 
 #. module: l10n_ec_withhold
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.e_withhold_document_body
@@ -371,7 +371,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_sale_withhold__invoice_ids
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_sale_withhold_line__invoice_id
 msgid "Invoice"
-msgstr ""
+msgstr "Factura"
 
 #. module: l10n_ec_withhold
 #: model:ir.model,name:l10n_ec_withhold.model_account_journal
@@ -379,17 +379,17 @@ msgstr ""
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_purchase_withhold__journal_id
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_sale_withhold__journal_id
 msgid "Journal"
-msgstr ""
+msgstr "Diario"
 
 #. module: l10n_ec_withhold
 #: model:ir.model,name:l10n_ec_withhold.model_account_move
 msgid "Journal Entry"
-msgstr ""
+msgstr "Entrada de diario"
 
 #. module: l10n_ec_withhold
 #: model:ir.model,name:l10n_ec_withhold.model_account_move_line
 msgid "Journal Item"
-msgstr ""
+msgstr "Item del diario"
 
 #. module: l10n_ec_withhold
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_purchase_withhold__write_uid
@@ -397,7 +397,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_sale_withhold__write_uid
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_sale_withhold_line__write_uid
 msgid "Last Updated by"
-msgstr ""
+msgstr "Última actualización por"
 
 #. module: l10n_ec_withhold
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_purchase_withhold__write_date
@@ -405,7 +405,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_sale_withhold__write_date
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_sale_withhold_line__write_date
 msgid "Last Updated on"
-msgstr ""
+msgstr "Última actualización el"
 
 #. module: l10n_ec_withhold
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_account_bank_statement_line__l10n_ec_withhold_line_ids
@@ -420,7 +420,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.l10n_ec_wizard_purchase_withhold_form_view
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.l10n_ec_wizard_sale_withhold_form_view
 msgid "Lines"
-msgstr ""
+msgstr "Líneas"
 
 #. module: l10n_ec_withhold
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.e_withhold_document_body
@@ -432,7 +432,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_purchase_withhold__partner_id
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_sale_withhold__partner_id
 msgid "Partner"
-msgstr ""
+msgstr "Contacto"
 
 #. module: l10n_ec_withhold
 #. odoo-python
@@ -440,21 +440,21 @@ msgstr ""
 #: code:addons/l10n_ec_withhold/wizard/wizard_create_purchase_withhold.py:0
 #, python-format
 msgid "Please add some withholding lines before continue"
-msgstr ""
+msgstr "Agregue algunas líneas de retención antes de continuar."
 
 #. module: l10n_ec_withhold
 #. odoo-python
 #: code:addons/l10n_ec_withhold/models/account_move.py:0
 #, python-format
 msgid "Please fill a Tax Support on Invoice: %s or on all Invoice lines"
-msgstr ""
+msgstr "Por favor, rellene un formulario de soporte fiscal en la factura: %s o en todas las líneas de la factura"
 
 #. module: l10n_ec_withhold
 #. odoo-python
 #: code:addons/l10n_ec_withhold/wizard/wizard_create_sale_withhold.py:0
 #, python-format
 msgid "Please only select invoice of a same customer"
-msgstr ""
+msgstr "Por favor seleccione únicamente la factura de un mismo cliente"
 
 #. module: l10n_ec_withhold
 #. odoo-python
@@ -467,7 +467,8 @@ msgid ""
 "Please select only invoice what satisfies the requirements for create "
 "withhold"
 msgstr ""
-
+"Seleccione solo la factura que cumpla con los requisitos para su creación. "
+"Retención"
 #. module: l10n_ec_withhold
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.e_withhold_document_body
 msgid "Porcentaje Retención"
@@ -477,67 +478,67 @@ msgstr ""
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__account_journal__l10n_ec_withholding_type__purchase
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__account_move__l10n_ec_withholding_type__purchase
 msgid "Purchase"
-msgstr ""
+msgstr "Compra"
 
 #. module: l10n_ec_withhold
 #: model:ir.ui.menu,name:l10n_ec_withhold.sri_withhold_purchase
 msgid "Purchase Withholding"
-msgstr ""
+msgstr "Retención de compras"
 
 #. module: l10n_ec_withhold
 #: model:ir.actions.act_window,name:l10n_ec_withhold.action_account_move_purchase_withhold
 msgid "Purchase Withholds"
-msgstr ""
+msgstr "Retenciones de compra"
 
 #. module: l10n_ec_withhold
 #: model:ir.actions.act_window,name:l10n_ec_withhold.l10n_ec_wizard_purchase_withhold_action_window
 msgid "Purchases Withholding"
-msgstr ""
+msgstr "Retención de compras"
 
 #. module: l10n_ec_withhold
 #. odoo-python
 #: code:addons/l10n_ec_withhold/wizard/wizard_create_purchase_withhold.py:0
 #, python-format
 msgid "RET: %(document_number)s Invoice: %(invoice_number)s"
-msgstr ""
+msgstr "RET: %(document_number)s Factura: %(invoice_number)s"
 
 #. module: l10n_ec_withhold
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_abstract_withhold__invoice_id
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_purchase_withhold__invoice_id
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_sale_withhold__invoice_id
 msgid "Related Document"
-msgstr ""
+msgstr "Documento relacionado"
 
 #. module: l10n_ec_withhold
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__account_journal__l10n_ec_withholding_type__sale
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__account_move__l10n_ec_withholding_type__sale
 msgid "Sale"
-msgstr ""
+msgstr "Venta"
 
 #. module: l10n_ec_withhold
 #: model:ir.actions.act_window,name:l10n_ec_withhold.action_account_move_sale_withhold
 msgid "Sale Withholds"
-msgstr ""
+msgstr "Retenciones de venta"
 
 #. module: l10n_ec_withhold
 #: model:ir.actions.act_window,name:l10n_ec_withhold.l10n_ec_wizard_sale_withhold_action_window
 #: model:ir.ui.menu,name:l10n_ec_withhold.sri_withhold_sales
 msgid "Sales Withholding"
-msgstr ""
+msgstr "Retención de ventas"
 
 #. module: l10n_ec_withhold
 #: model:ir.model.fields,help:l10n_ec_withhold.field_account_fiscal_position__l10n_ec_avoid_withhold
 #: model:ir.model.fields,help:l10n_ec_withhold.field_res_partner__l10n_ec_avoid_withhold
 #: model:ir.model.fields,help:l10n_ec_withhold.field_res_users__l10n_ec_avoid_withhold
 msgid "Select if the tax position no require withholding"
-msgstr ""
+msgstr "Seleccione si la posición fiscal no requiere retención"
 
 #. module: l10n_ec_withhold
 #. odoo-python
 #: code:addons/l10n_ec_withhold/models/account_move.py:0
 #, python-format
 msgid "Send"
-msgstr ""
+msgstr "Enviar"
 
 #. module: l10n_ec_withhold
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_account_bank_statement_line__l10n_ec_tax_support
@@ -548,7 +549,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_res_partner__l10n_ec_tax_support
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_res_users__l10n_ec_tax_support
 msgid "Tax Support"
-msgstr ""
+msgstr "Sustento Tributario"
 
 #. module: l10n_ec_withhold
 #: model:ir.model.fields,help:l10n_ec_withhold.field_account_bank_statement_line__l10n_ec_tax_support
@@ -558,7 +559,7 @@ msgstr ""
 #: model:ir.model.fields,help:l10n_ec_withhold.field_res_partner__l10n_ec_tax_support
 #: model:ir.model.fields,help:l10n_ec_withhold.field_res_users__l10n_ec_tax_support
 msgid "Tax support in invoice line"
-msgstr ""
+msgstr "Sustento Tributario en la línea de factura"
 
 #. module: l10n_ec_withhold
 #. odoo-python
@@ -569,7 +570,9 @@ msgid ""
 "withholdings from Ecuadorian companies. Please review the country for the "
 "Vendor: %s"
 msgstr ""
-
+"El proveedor es extranjero y actualmente el soporte se proporciona exclusivamente para "
+"retenciones de empresas ecuatorianas. Por favor, revise el país para el "
+"proveedor: %s."
 #. module: l10n_ec_withhold
 #. odoo-python
 #: code:addons/l10n_ec_withhold/wizard/wizard_create_purchase_withhold.py:0
@@ -581,7 +584,11 @@ msgid ""
 " - The tax support of the invoice lines(or Tax support on the invoice) is equal to Tax support of the withholding line.\n"
 " - The invoice lines have taxes correctly configured(VAT or Profit)."
 msgstr ""
-
+"El importe base de la retención es cero.\n"
+"Revisar las líneas de retención con el Soporte Fiscal: %s.\n"
+"Asegúrese de lo siguiente:\n"
+"- El soporte fiscal de las líneas de la factura (o el soporte fiscal en la factura) es igual al soporte fiscal de la línea de retención.\n"
+"- Las líneas de la factura tienen los impuestos configurados correctamente (IVA o Ganancias)."
 #. module: l10n_ec_withhold
 #. odoo-python
 #: code:addons/l10n_ec_withhold/wizard/wizard_create_purchase_withhold.py:0
@@ -591,30 +598,32 @@ msgid ""
 " - The tax support of the invoice lines(or Tax support on the invoice) is equal to Tax support of the withholding line.\n"
 " - The invoice lines have taxes correctly configured(VAT or Profit)."
 msgstr ""
-
+"El importe base de la retención es cero. Asegúrese de lo siguiente:\n"
+"- El soporte fiscal de las líneas de factura (o el soporte fiscal en la factura) es igual al soporte fiscal de la línea de retención.\n"
+"- Las líneas de factura tienen los impuestos configurados correctamente (IVA o Utilidad)."
 #. module: l10n_ec_withhold
 #. odoo-python
 #: code:addons/l10n_ec_withhold/wizard/wizard_create_sale_withhold.py:0
 #, python-format
 msgid "The selected invoice is paid or one of selected invoice is paid"
-msgstr ""
+msgstr "La factura seleccionada está pagada o una de las facturas seleccionadas está pagada"
 
 #. module: l10n_ec_withhold
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.view_account_move_withhold_form
 msgid "Total Amount"
-msgstr ""
+msgstr "Importe total"
 
 #. module: l10n_ec_withhold
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.view_account_move_withhold_form
 msgid "Total Basis"
-msgstr ""
+msgstr "Base total"
 
 #. module: l10n_ec_withhold
 #. odoo-python
 #: code:addons/l10n_ec_withhold/wizard/wizard_create_purchase_withhold.py:0
 #, python-format
 msgid "User Information"
-msgstr ""
+msgstr "Información del usuario"
 
 #. module: l10n_ec_withhold
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.e_withhold_document_body
@@ -624,7 +633,7 @@ msgstr ""
 #. module: l10n_ec_withhold
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.view_account_move_withhold_form
 msgid "Vendor"
-msgstr ""
+msgstr "Proveedor"
 
 #. module: l10n_ec_withhold
 #. odoo-python
@@ -637,45 +646,45 @@ msgstr ""
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_sale_withhold_line__withhold_id
 #, python-format
 msgid "Withhold"
-msgstr ""
+msgstr "Retener"
 
 #. module: l10n_ec_withhold
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.view_account_move_withhold_form
 msgid "Withhold Amount"
-msgstr ""
+msgstr "Monto retenido"
 
 #. module: l10n_ec_withhold
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.view_account_move_withhold_form
 msgid "Withhold Basis"
-msgstr ""
+msgstr "Base de retención"
 
 #. module: l10n_ec_withhold
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.view_account_move_withhold_form
 msgid "Withhold Lines"
-msgstr ""
+msgstr "Líneas de retención"
 
 #. module: l10n_ec_withhold
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_account_move_line__l10n_ec_withhold_tax_amount
 msgid "Withhold Tax Amount"
-msgstr ""
+msgstr "Importe de retención de impuestos"
 
 #. module: l10n_ec_withhold
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_purchase_withhold__withhold_totals
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_sale_withhold__withhold_totals
 msgid "Withhold Totals"
-msgstr ""
+msgstr "Totales retenidos"
 
 #. module: l10n_ec_withhold
 #. odoo-python
 #: code:addons/l10n_ec_withhold/models/account_move.py:0
 #, python-format
 msgid "Withholding"
-msgstr ""
+msgstr "Retención"
 
 #. module: l10n_ec_withhold
 #: model:ir.actions.report,name:l10n_ec_withhold.action_report_withholding_ec
 msgid "Withholding EC"
-msgstr ""
+msgstr "Retención CE"
 
 #. module: l10n_ec_withhold
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_account_bank_statement_line__l10n_ec_withholding_type
@@ -686,53 +695,53 @@ msgstr ""
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_purchase_withhold_line__tax_group_withhold_id
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_sale_withhold_line__tax_group_withhold_id
 msgid "Withholding Type"
-msgstr ""
+msgstr "Tipo de retención"
 
 #. module: l10n_ec_withhold
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_abstract_withhold_line__tax_withhold_id
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_purchase_withhold_line__tax_withhold_id
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_l10n_ec_wizard_create_sale_withhold_line__tax_withhold_id
 msgid "Withholding tax"
-msgstr ""
+msgstr "Retención de impuestos"
 
 #. module: l10n_ec_withhold
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_account_bank_statement_line__l10n_ec_withhold_count
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_account_move__l10n_ec_withhold_count
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_account_payment__l10n_ec_withhold_count
 msgid "Withholds Count"
-msgstr ""
+msgstr "Recuento de retenciones"
 
 #. module: l10n_ec_withhold
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_account_bank_statement_line__l10n_ec_withhold_active
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_account_move__l10n_ec_withhold_active
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_account_payment__l10n_ec_withhold_active
 msgid "Withholds?"
-msgstr ""
+msgstr "¿Retenciones?"
 
 #. module: l10n_ec_withhold
 #: model:ir.model,name:l10n_ec_withhold.model_l10n_ec_wizard_abstract_withhold_line
 msgid "Wizard Abstract withhold line"
-msgstr ""
+msgstr "Línea de retención del resumen del asistente"
 
 #. module: l10n_ec_withhold
 #: model:ir.model,name:l10n_ec_withhold.model_l10n_ec_wizard_create_purchase_withhold
 msgid "Wizard Purchase withhold"
-msgstr ""
+msgstr "Retención de compra del asistente"
 
 #. module: l10n_ec_withhold
 #: model:ir.model,name:l10n_ec_withhold.model_l10n_ec_wizard_create_purchase_withhold_line
 msgid "Wizard Purchase withhold line"
-msgstr ""
+msgstr "Línea de retención de compra del asistente"
 
 #. module: l10n_ec_withhold
 #: model:ir.model,name:l10n_ec_withhold.model_l10n_ec_wizard_create_sale_withhold
 msgid "Wizard Sale withhold"
-msgstr ""
+msgstr "Venta de mago retenida"
 
 #. module: l10n_ec_withhold
 #: model:ir.model,name:l10n_ec_withhold.model_l10n_ec_wizard_create_sale_withhold_line
 msgid "Wizard Sale withhold line"
-msgstr ""
+msgstr "Línea de retención de venta de Wizard"
 
 #. module: l10n_ec_withhold
 #. odoo-python
@@ -741,8 +750,7 @@ msgstr ""
 #, python-format
 msgid ""
 "You can't create Withhold for some invoice, Please select only a Invoice."
-msgstr ""
-
+msgstr "No se puede crear retención para algunas facturas. Seleccione solo una factura"
 #. module: l10n_ec_withhold
 #. odoo-python
 #: code:addons/l10n_ec_withhold/models/account_move.py:0
@@ -751,10 +759,11 @@ msgid ""
 "You can't create other withholding with same Number: %(ref)s for Customer: "
 "%(customer)s"
 msgstr ""
-
+"No se puede crear otra retención con el mismo número: %(ref)s para el cliente: "
+"%(customer)s"
 #. module: l10n_ec_withhold
 #. odoo-python
 #: code:addons/l10n_ec_withhold/models/account_move.py:0
 #, python-format
 msgid "You can't unlink this Withhold was authorized on SRI."
-msgstr ""
+msgstr "No puedes desvincular esta retención que fue autorizada en SRI."
