@@ -100,9 +100,9 @@ class AccountEdiDocument(models.Model):
         tax_vals = {
             "codigo": tax.tax_group_id.l10n_ec_xml_fe_code,
             "codigoPorcentaje": tax.l10n_ec_xml_fe_code,
-            "baseImponible": self._l10n_ec_number_format(abs(base_amount), 6),
-            "tarifa": self._l10n_ec_number_format(abs(rate), 6),
-            "valor": self._l10n_ec_number_format(abs(tax_amount), 6),
+            "baseImponible": self._l10n_ec_number_format(abs(base_amount), 2),
+            "tarifa": self._l10n_ec_number_format(abs(rate), 2),
+            "valor": self._l10n_ec_number_format(abs(tax_amount), 2),
         }
         return tax_vals
 
@@ -397,14 +397,14 @@ class AccountEdiDocument(models.Model):
             "direccionComprador": self._l10n_ec_clean_str(
                 invoice.commercial_partner_id.street or "NA"
             )[:300],
-            "totalSinImpuestos": self._l10n_ec_number_format(invoice.amount_untaxed, 6),
+            "totalSinImpuestos": self._l10n_ec_number_format(invoice.amount_untaxed, 2),
             "totalDescuento": self._l10n_ec_number_format(
-                self._l10n_ec_compute_amount_discount(), 6
+                self._l10n_ec_compute_amount_discount(), 2
             ),
             "totalConImpuestos": self.l10n_ec_header_get_total_with_taxes(taxes_data),
             "compensaciones": [],
             "propina": False,
-            "importeTotal": self._l10n_ec_number_format(amount_total, 6),
+            "importeTotal": self._l10n_ec_number_format(amount_total, 2),
             "moneda": currency_name,
             "pagos": invoice._l10n_ec_get_payment_data(),
             "valorRetIva": False,
@@ -443,13 +443,13 @@ class AccountEdiDocument(models.Model):
             "direccionProveedor": self._l10n_ec_clean_str(
                 invoice.commercial_partner_id.street or "NA"
             )[:300],
-            "totalSinImpuestos": self._l10n_ec_number_format(invoice.amount_untaxed, 6),
+            "totalSinImpuestos": self._l10n_ec_number_format(invoice.amount_untaxed, 2),
             "totalDescuento": self._l10n_ec_number_format(
-                self._l10n_ec_compute_amount_discount(), 6
+                self._l10n_ec_compute_amount_discount(), 2
             ),
             "totalConImpuestos": self.l10n_ec_header_get_total_with_taxes(taxes_data),
             "compensaciones": [],
-            "importeTotal": self._l10n_ec_number_format(amount_total, 6),
+            "importeTotal": self._l10n_ec_number_format(amount_total, 2),
             "moneda": currency_name,
             "pagos": invoice._l10n_ec_get_payment_data(),
             "valorRetIva": False,
@@ -500,13 +500,13 @@ class AccountEdiDocument(models.Model):
                 credit_note.amount_untaxed, 6
             ),
             "totalDescuento": self._l10n_ec_number_format(
-                self._l10n_ec_compute_amount_discount(), 6
+                self._l10n_ec_compute_amount_discount(), 2
             ),
             "totalConImpuestos": self.l10n_ec_header_get_total_with_taxes(taxes_data),
             "compensaciones": [],
             "propina": False,
-            "importeTotal": self._l10n_ec_number_format(amount_total, 6),
-            "valorModificacion": self._l10n_ec_number_format(amount_total, 6),
+            "importeTotal": self._l10n_ec_number_format(amount_total, 2),
+            "valorModificacion": self._l10n_ec_number_format(amount_total, 2),
             "moneda": currency_name,
             "pagos": credit_note._l10n_ec_get_payment_data(),
             "valorRetIva": False,
@@ -683,7 +683,7 @@ class AccountEdiDocument(models.Model):
                 EDI_DATE_FORMAT
             ),
             "totalSinImpuestos": self._l10n_ec_number_format(
-                debit_note.amount_untaxed, 6
+                debit_note.amount_untaxed, 2
             ),
             "totalConImpuestos": self.l10n_ec_header_get_total_with_taxes(taxes_data),
             "importeTotal": self._l10n_ec_number_format(amount_total, 6),
