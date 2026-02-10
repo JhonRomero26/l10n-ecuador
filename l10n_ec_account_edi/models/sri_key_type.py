@@ -20,6 +20,17 @@ from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
+
+def _safe_exc_text(exc):
+    try:
+        return str(exc)
+    except Exception:
+        try:
+            return repr(exc)
+        except Exception:
+            return "<unprintable exception>"
+
+
 # Commands to extract key and certificate from PKCS#12
 # using OpenSSL with legacy support
 # The -legacy flag is required for certificates using
@@ -175,7 +186,10 @@ class SriKeyType(models.Model):
                         "Cryptography error: %(crypto_error)s\n"
                         "OpenSSL legacy error: %(openssl_error)s"
                     )
-                    % {"crypto_error": str(ex), "openssl_error": str(legacy_ex)}
+                    % {
+                        "crypto_error": _safe_exc_text(ex),
+                        "openssl_error": _safe_exc_text(legacy_ex),
+                    }
                 ) from None
 
         if private_key is None or cert is None:
@@ -188,6 +202,11 @@ class SriKeyType(models.Model):
                 ku = x509.extensions.get_extension_for_oid(ExtensionOID.KEY_USAGE).value
                 return bool(getattr(ku, "digital_signature", False))
             except ExtensionNotFound:
+                return True
+            except Exception as ex:
+                _logger.warning(
+                    "Skipping key usage check due to malformed extension: %s", ex
+                )
                 return True
 
         if not has_digital_signature(cert) and other_certs:
