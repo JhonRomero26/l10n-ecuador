@@ -1,32 +1,32 @@
 TAX_SUPPORT = [
-    ("00", "00 - No aplica"),
+    ("00", "00 - Not applicable"),
     (
         "01",
-        "01 - Crédito Tributario para declaración de IVA \
-         (servicios y bienes distintos de inventarios y activos fijos)",
+        "01 - Tax credit for VAT return \
+         (services and goods other than inventories and fixed assets)",
     ),
     (
         "02",
-        "02 - Costo o Gasto para declaración de IR \
-        (servicios y bienes distintos de inventarios y activos fijos)",
+        "02 - Cost or expense for income tax return \
+        (services and goods other than inventories and fixed assets)",
     ),
-    ("03", "03 - Activo Fijo - Crédito Tributario para declaración de IVA"),
-    ("04", "04 - Activo Fijo - Costo o Gasto para declaración de IR"),
+    ("03", "03 - Fixed asset - Tax credit for VAT return"),
+    ("04", "04 - Fixed asset - Cost or expense for income tax return"),
     (
         "05",
-        "05 - Liquidación Gastos de Viaje, hospedaje y alimentación Gastos IR \
-        (a nombre de empleados y no de la empresa)",
+        "05 - Travel, lodging and meals settlement for income tax \
+        (in employees' names and not in the company's name)",
     ),
-    ("06", "06 - Inventario - Crédito Tributario para declaración de IVA"),
-    ("07", "07 - Inventario - Costo o Gasto para declaración de IR"),
-    ("08", "08 - Valor pagado para solicitar Reembolso de Gasto (intermediario)"),
-    ("09", "09 - Reembolso por Siniestros"),
-    ("10", "10 - Distribución de Dividendos, Beneficios o Utilidades"),
-    ("11", "11 - Convenios de débito o recaudación para IFI´s"),
-    ("12", "12 - Impuestos y retenciones presuntivos"),
+    ("06", "06 - Inventory - Tax credit for VAT return"),
+    ("07", "07 - Inventory - Cost or expense for income tax return"),
+    ("08", "08 - Amount paid to request expense reimbursement (intermediary)"),
+    ("09", "09 - Claim reimbursements"),
+    ("10", "10 - Distribution of dividends, benefits, or profits"),
+    ("11", "11 - Debit or collection agreements for IFIs"),
+    ("12", "12 - Presumptive taxes and withholdings"),
     (
         "13",
-        "13 - Valores reconocidos por entidades del sector público \
-        a favor de sujetos pasivos",
+        "13 - Amounts recognized by public sector entities \
+        in favor of taxpayers",
     ),
 ]

@@ -25,7 +25,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__account_move_line__l10n_ec_tax_support__00
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__l10n_ec_wizard_create_purchase_withhold_line__l10n_ec_tax_support__00
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__res_partner__l10n_ec_tax_support__00
-msgid "00 - No aplica"
+msgid "00 - Not applicable"
 msgstr ""
 
 #. module: l10n_ec_withhold
@@ -34,8 +34,8 @@ msgstr ""
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__l10n_ec_wizard_create_purchase_withhold_line__l10n_ec_tax_support__01
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__res_partner__l10n_ec_tax_support__01
 msgid ""
-"01 - Crédito Tributario para declaración de IVA          (servicios y bienes"
-" distintos de inventarios y activos fijos)"
+"01 - Tax credit for VAT return (services and goods other than inventories "
+"and fixed assets)"
 msgstr ""
 
 #. module: l10n_ec_withhold
@@ -44,8 +44,8 @@ msgstr ""
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__l10n_ec_wizard_create_purchase_withhold_line__l10n_ec_tax_support__02
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__res_partner__l10n_ec_tax_support__02
 msgid ""
-"02 - Costo o Gasto para declaración de IR         (servicios y bienes "
-"distintos de inventarios y activos fijos)"
+"02 - Cost or expense for income tax return (services and goods other than "
+"inventories and fixed assets)"
 msgstr ""
 
 #. module: l10n_ec_withhold
@@ -53,7 +53,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__account_move_line__l10n_ec_tax_support__03
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__l10n_ec_wizard_create_purchase_withhold_line__l10n_ec_tax_support__03
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__res_partner__l10n_ec_tax_support__03
-msgid "03 - Activo Fijo - Crédito Tributario para declaración de IVA"
+msgid "03 - Fixed asset - Tax credit for VAT return"
 msgstr ""
 
 #. module: l10n_ec_withhold
@@ -61,7 +61,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__account_move_line__l10n_ec_tax_support__04
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__l10n_ec_wizard_create_purchase_withhold_line__l10n_ec_tax_support__04
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__res_partner__l10n_ec_tax_support__04
-msgid "04 - Activo Fijo - Costo o Gasto para declaración de IR"
+msgid "04 - Fixed asset - Cost or expense for income tax return"
 msgstr ""
 
 #. module: l10n_ec_withhold
@@ -70,8 +70,8 @@ msgstr ""
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__l10n_ec_wizard_create_purchase_withhold_line__l10n_ec_tax_support__05
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__res_partner__l10n_ec_tax_support__05
 msgid ""
-"05 - Liquidación Gastos de Viaje, hospedaje y alimentación Gastos IR"
-"         (a nombre de empleados y no de la empresa)"
+"05 - Travel, lodging and meals settlement for income tax (in employees' "
+"names and not in the company's name)"
 msgstr ""
 
 #. module: l10n_ec_withhold
@@ -79,7 +79,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__account_move_line__l10n_ec_tax_support__06
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__l10n_ec_wizard_create_purchase_withhold_line__l10n_ec_tax_support__06
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__res_partner__l10n_ec_tax_support__06
-msgid "06 - Inventario - Crédito Tributario para declaración de IVA"
+msgid "06 - Inventory - Tax credit for VAT return"
 msgstr ""
 
 #. module: l10n_ec_withhold
@@ -87,7 +87,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__account_move_line__l10n_ec_tax_support__07
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__l10n_ec_wizard_create_purchase_withhold_line__l10n_ec_tax_support__07
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__res_partner__l10n_ec_tax_support__07
-msgid "07 - Inventario - Costo o Gasto para declaración de IR"
+msgid "07 - Inventory - Cost or expense for income tax return"
 msgstr ""
 
 #. module: l10n_ec_withhold
@@ -95,7 +95,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__account_move_line__l10n_ec_tax_support__08
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__l10n_ec_wizard_create_purchase_withhold_line__l10n_ec_tax_support__08
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__res_partner__l10n_ec_tax_support__08
-msgid "08 - Valor pagado para solicitar Reembolso de Gasto (intermediario)"
+msgid "08 - Amount paid to request expense reimbursement (intermediary)"
 msgstr ""
 
 #. module: l10n_ec_withhold
@@ -103,7 +103,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__account_move_line__l10n_ec_tax_support__09
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__l10n_ec_wizard_create_purchase_withhold_line__l10n_ec_tax_support__09
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__res_partner__l10n_ec_tax_support__09
-msgid "09 - Reembolso por Siniestros"
+msgid "09 - Claim reimbursements"
 msgstr ""
 
 #. module: l10n_ec_withhold
@@ -111,7 +111,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__account_move_line__l10n_ec_tax_support__10
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__l10n_ec_wizard_create_purchase_withhold_line__l10n_ec_tax_support__10
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__res_partner__l10n_ec_tax_support__10
-msgid "10 - Distribución de Dividendos, Beneficios o Utilidades"
+msgid "10 - Distribution of dividends, benefits, or profits"
 msgstr ""
 
 #. module: l10n_ec_withhold
@@ -119,7 +119,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__account_move_line__l10n_ec_tax_support__11
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__l10n_ec_wizard_create_purchase_withhold_line__l10n_ec_tax_support__11
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__res_partner__l10n_ec_tax_support__11
-msgid "11 - Convenios de débito o recaudación para IFI´s"
+msgid "11 - Debit or collection agreements for IFIs"
 msgstr ""
 
 #. module: l10n_ec_withhold
@@ -127,7 +127,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__account_move_line__l10n_ec_tax_support__12
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__l10n_ec_wizard_create_purchase_withhold_line__l10n_ec_tax_support__12
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__res_partner__l10n_ec_tax_support__12
-msgid "12 - Impuestos y retenciones presuntivos"
+msgid "12 - Presumptive taxes and withholdings"
 msgstr ""
 
 #. module: l10n_ec_withhold
@@ -136,8 +136,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__l10n_ec_wizard_create_purchase_withhold_line__l10n_ec_tax_support__13
 #: model:ir.model.fields.selection,name:l10n_ec_withhold.selection__res_partner__l10n_ec_tax_support__13
 msgid ""
-"13 - Valores reconocidos por entidades del sector público         a favor de"
-" sujetos pasivos"
+"13 - Amounts recognized by public sector entities in favor of taxpayers"
 msgstr ""
 
 #. module: l10n_ec_withhold
@@ -147,17 +146,17 @@ msgstr "<span class=\"o_stat_text\">Retención</span>"
 
 #. module: l10n_ec_withhold
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.e_withhold_document_body
-msgid "<strong>Fecha de Emisión:</strong>"
+msgid "<strong>Issue Date:</strong>"
 msgstr ""
 
 #. module: l10n_ec_withhold
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.e_withhold_document_body
-msgid "<strong>Identificación:</strong>"
+msgid "<strong>Identification:</strong>"
 msgstr ""
 
 #. module: l10n_ec_withhold
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.e_withhold_document_body
-msgid "<strong>Razón social / Nombres y Apellidos:</strong>"
+msgid "<strong>Business Name / Full Name:</strong>"
 msgstr ""
 
 #. module: l10n_ec_withhold
@@ -236,7 +235,7 @@ msgstr "¿Evitar la retención?"
 
 #. module: l10n_ec_withhold
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.e_withhold_document_body
-msgid "Base Imponible para la Retención"
+msgid "Taxable Base for Withholding"
 msgstr ""
 
 #. module: l10n_ec_withhold
@@ -247,7 +246,7 @@ msgstr "Cancelar"
 
 #. module: l10n_ec_withhold
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.e_withhold_document_body
-msgid "Comprobante"
+msgid "Document"
 msgstr ""
 
 #. module: l10n_ec_withhold
@@ -323,7 +322,7 @@ msgstr "El documento ecuatoriano %s debe ser como 001-001-123456789"
 
 #. module: l10n_ec_withhold
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.e_withhold_document_body
-msgid "Ejercicio Fiscal"
+msgid "Fiscal Year"
 msgstr ""
 
 #. module: l10n_ec_withhold
@@ -340,7 +339,7 @@ msgstr "Documento electrónico para un account.move"
 
 #. module: l10n_ec_withhold
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.e_withhold_document_body
-msgid "Fecha emisión"
+msgid "Issue Date"
 msgstr ""
 
 #. module: l10n_ec_withhold
@@ -358,7 +357,7 @@ msgstr ""
 
 #. module: l10n_ec_withhold
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.e_withhold_document_body
-msgid "Impuesto"
+msgid "Tax"
 msgstr ""
 
 #. module: l10n_ec_withhold
@@ -407,7 +406,7 @@ msgstr "Última actualización el"
 #. module: l10n_ec_withhold
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_account_bank_statement_line__l10n_ec_withhold_line_ids
 #: model:ir.model.fields,field_description:l10n_ec_withhold.field_account_move__l10n_ec_withhold_line_ids
-msgid "Lineas de retencion"
+msgid "Withholding Lines"
 msgstr ""
 
 #. module: l10n_ec_withhold
@@ -420,7 +419,7 @@ msgstr "Líneas"
 
 #. module: l10n_ec_withhold
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.e_withhold_document_body
-msgid "Número"
+msgid "Number"
 msgstr ""
 
 #. module: l10n_ec_withhold
@@ -462,7 +461,7 @@ msgstr ""
 "Retención"
 #. module: l10n_ec_withhold
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.e_withhold_document_body
-msgid "Porcentaje Retención"
+msgid "Withholding Rate"
 msgstr ""
 
 #. module: l10n_ec_withhold
@@ -614,7 +613,7 @@ msgstr "Información del usuario"
 
 #. module: l10n_ec_withhold
 #: model_terms:ir.ui.view,arch_db:l10n_ec_withhold.e_withhold_document_body
-msgid "Valor Retenido"
+msgid "Withheld Amount"
 msgstr ""
 
 #. module: l10n_ec_withhold

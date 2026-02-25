@@ -7,17 +7,17 @@
                 <tbody>
                     <tr>
                         <td style="width: 60%">
-                            <strong>Razón social / Nombres y Apellidos:</strong>
+                            <strong>Business Name / Full Name:</strong>
                             <span t-field="partner.name" />
                         </td>
                         <td>
-                            <strong>Identificación:</strong>
+                            <strong>Identification:</strong>
                             <span t-field="partner.vat" />
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <strong>Fecha de Emisión:</strong>
+                            <strong>Issue Date:</strong>
                             <span t-field="o.date" />
                         </td>
                     </tr>
@@ -28,17 +28,17 @@
         <table class="table table-sm table-bordered-black">
             <thead>
                 <tr style="font-size: 10px;">
-                    <th name="th_document" style="width: 10%">Comprobante</th>
-                    <th name="th_number" style="width: 15%">Número</th>
-                    <th name="th_date" style="width: 10%">Fecha emisión</th>
-                    <th name="th_year" style="width: 10%">Ejercicio Fiscal</th>
+                    <th name="th_document" style="width: 10%">Document</th>
+                    <th name="th_number" style="width: 15%">Number</th>
+                    <th name="th_date" style="width: 10%">Issue Date</th>
+                    <th name="th_year" style="width: 10%">Fiscal Year</th>
                     <th
                         name="th_base"
                         style="width: 15%"
-                    >Base Imponible para la Retención</th>
-                    <th name="th_tax">Impuesto</th>
-                    <th name="th_percentage">Porcentaje Retención</th>
-                    <th name="th_amount">Valor Retenido</th>
+                    >Taxable Base for Withholding</th>
+                    <th name="th_tax">Tax</th>
+                    <th name="th_percentage">Withholding Rate</th>
+                    <th name="th_amount">Withheld Amount</th>
                 </tr>
             </thead>
             <tbody>
