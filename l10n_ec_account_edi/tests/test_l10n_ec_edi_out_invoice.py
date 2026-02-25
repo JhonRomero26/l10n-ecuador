@@ -102,9 +102,8 @@ class TestL10nOutInvoice(TestL10nECEdiCommon):
 
         with self.assertLogs("odoo.addons.l10n_ec_account_edi") as log_catcher:
             edi_doc._process_documents_web_services(with_commit=False)
-            self.assertIn(
-                "can't validate document",
-                log_catcher.output[0],
+            self.assertTrue(
+                any("can't validate document" in msg for msg in log_catcher.output)
             )
 
         # Comprobar que la factura esté validada,
@@ -162,7 +161,9 @@ class TestL10nOutInvoice(TestL10nECEdiCommon):
         ):
             with self.assertLogs("odoo.addons.l10n_ec_account_edi") as log_catcher:
                 processed = edi_doc._process_documents_web_services(with_commit=False)
-                self.assertIn("Authorization succesful", log_catcher.output[0])
+                self.assertTrue(
+                    any("Authorization succesful" in msg for msg in log_catcher.output)
+                )
                 self.assertEqual(processed, 0)
 
         self.assertEqual(edi_doc.state, "sent")
@@ -308,6 +309,44 @@ class TestL10nOutInvoice(TestL10nECEdiCommon):
                 line.quantity = 0
         with self.assertRaises(UserError):
             invoice.action_post()
+
+    def test_l10n_ec_out_invoice_xml_with_discount(self):
+        """Generar XML de factura con descuento y validar valores de detalle."""
+        self._setup_edi_company_ec()
+        invoice = self._l10n_ec_prepare_edi_out_invoice(auto_post=False)
+        with Form(invoice) as form:
+            with form.invoice_line_ids.edit(0) as line:
+                line.quantity = 2
+                line.price_unit = 10.0
+                line.discount = 10.0
+        invoice.action_post()
+        edi_doc = invoice._get_edi_document(self.edi_format)
+        xml_file = edi_doc._l10n_ec_render_xml_edi()
+        self.assertIn("<descuento>2.000000</descuento>", xml_file)
+        self.assertIn(
+            "<precioTotalSinImpuesto>18.000000</precioTotalSinImpuesto>", xml_file
+        )
+
+    def test_l10n_ec_out_invoice_line_edi_amounts_fallback_with_discount(self):
+        """No debe fallar si _prepare_edi_vals_to_export no trae price_subtotal."""
+        self._setup_edi_company_ec()
+        invoice = self._l10n_ec_prepare_edi_out_invoice(auto_post=False)
+        with Form(invoice) as form:
+            with form.invoice_line_ids.edit(0) as line:
+                line.quantity = 2
+                line.price_unit = 10.0
+                line.discount = 10.0
+        line = invoice.invoice_line_ids.filtered(
+            lambda line_rec: line_rec.display_type == "product"
+        )[0]
+        with patch.object(
+            type(line),
+            "_prepare_edi_vals_to_export",
+            return_value={"price_subtotal_before_discount": 20.0},
+        ):
+            vals = line.l10n_ec_get_invoice_edi_data(taxes_data={})
+        self.assertEqual(vals.get("descuento"), "2.000000")
+        self.assertEqual(vals.get("precioTotalSinImpuesto"), "18.000000")
 
     @patch_service_sri
     def test_l10n_ec_out_invoice_with_additional_info(self):
