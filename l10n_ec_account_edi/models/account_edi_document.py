@@ -2,6 +2,7 @@ import logging
 import re
 import traceback
 from datetime import datetime
+from decimal import Decimal
 from os import path
 from random import randint
 
@@ -100,23 +101,57 @@ class AccountEdiDocument(models.Model):
         tax_vals = {
             "codigo": tax.tax_group_id.l10n_ec_xml_fe_code,
             "codigoPorcentaje": tax.l10n_ec_xml_fe_code,
-            "baseImponible": self._l10n_ec_number_format(abs(base_amount), 6),
-            "tarifa": self._l10n_ec_number_format(abs(rate), 6),
-            "valor": self._l10n_ec_number_format(abs(tax_amount), 6),
+            "baseImponible": self._l10n_ec_number_format(abs(base_amount), 2),
+            "tarifa": self._l10n_ec_number_format(abs(rate), 2),
+            "valor": self._l10n_ec_number_format(abs(tax_amount), 2),
         }
         return tax_vals
 
     def l10n_ec_header_get_total_with_taxes(self, taxes_data):
         self.ensure_one()
-        res = []
+        grouped_taxes = {}
         per_record = (taxes_data or {}).get("tax_details_per_record") or {}
         for rec_vals in per_record.values():
             tax_details = rec_vals.get("tax_details") or {}
             for td in tax_details.values():
                 taxes_data_list = td.get("taxes_data") or []
-                if not taxes_data_list:
-                    continue
-                res.append(self._l10n_ec_prepare_tax_vals_edi(taxes_data_list[0]))
+                for tax_data in taxes_data_list:
+                    tax = tax_data.get("tax")
+                    if not tax:
+                        trl = tax_data.get("tax_repartition_line")
+                        tax = trl.tax_id if trl else None
+                    if not tax or not tax.tax_group_id:
+                        continue
+                    codigo = tax.tax_group_id.l10n_ec_xml_fe_code
+                    codigo_porcentaje = tax.l10n_ec_xml_fe_code
+                    if not (codigo and codigo_porcentaje):
+                        continue
+                    key = (codigo, codigo_porcentaje)
+                    entry = grouped_taxes.setdefault(
+                        key,
+                        {
+                            "tax": tax,
+                            "base": Decimal("0.0"),
+                            "valor": Decimal("0.0"),
+                        },
+                    )
+                    base_amount = tax_data.get("base_amount_currency") or 0.0
+                    tax_amount = tax_data.get("tax_amount_currency") or 0.0
+                    entry["base"] += Decimal(str(base_amount))
+                    entry["valor"] += Decimal(str(tax_amount))
+        res = []
+        for (codigo, codigo_porcentaje), aggregated in grouped_taxes.items():
+            tax = aggregated["tax"]
+            base_amount = abs(aggregated["base"])
+            valor = abs(aggregated["valor"])
+            tax_vals = {
+                "codigo": codigo,
+                "codigoPorcentaje": codigo_porcentaje,
+                "baseImponible": self._l10n_ec_number_format(float(base_amount), 2),
+                "tarifa": self._l10n_ec_number_format(abs(tax.amount or 0.0), 2),
+                "valor": self._l10n_ec_number_format(float(valor), 2),
+            }
+            res.append(tax_vals)
         return res
 
     def _l10n_ec_get_environment(self):
@@ -397,14 +432,14 @@ class AccountEdiDocument(models.Model):
             "direccionComprador": self._l10n_ec_clean_str(
                 invoice.commercial_partner_id.street or "NA"
             )[:300],
-            "totalSinImpuestos": self._l10n_ec_number_format(invoice.amount_untaxed, 6),
+            "totalSinImpuestos": self._l10n_ec_number_format(invoice.amount_untaxed, 2),
             "totalDescuento": self._l10n_ec_number_format(
-                self._l10n_ec_compute_amount_discount(), 6
+                self._l10n_ec_compute_amount_discount(), 2
             ),
             "totalConImpuestos": self.l10n_ec_header_get_total_with_taxes(taxes_data),
             "compensaciones": [],
             "propina": False,
-            "importeTotal": self._l10n_ec_number_format(amount_total, 6),
+            "importeTotal": self._l10n_ec_number_format(amount_total, 2),
             "moneda": currency_name,
             "pagos": invoice._l10n_ec_get_payment_data(),
             "valorRetIva": False,
@@ -443,13 +478,13 @@ class AccountEdiDocument(models.Model):
             "direccionProveedor": self._l10n_ec_clean_str(
                 invoice.commercial_partner_id.street or "NA"
             )[:300],
-            "totalSinImpuestos": self._l10n_ec_number_format(invoice.amount_untaxed, 6),
+            "totalSinImpuestos": self._l10n_ec_number_format(invoice.amount_untaxed, 2),
             "totalDescuento": self._l10n_ec_number_format(
-                self._l10n_ec_compute_amount_discount(), 6
+                self._l10n_ec_compute_amount_discount(), 2
             ),
             "totalConImpuestos": self.l10n_ec_header_get_total_with_taxes(taxes_data),
             "compensaciones": [],
-            "importeTotal": self._l10n_ec_number_format(amount_total, 6),
+            "importeTotal": self._l10n_ec_number_format(amount_total, 2),
             "moneda": currency_name,
             "pagos": invoice._l10n_ec_get_payment_data(),
             "valorRetIva": False,
@@ -500,13 +535,13 @@ class AccountEdiDocument(models.Model):
                 credit_note.amount_untaxed, 6
             ),
             "totalDescuento": self._l10n_ec_number_format(
-                self._l10n_ec_compute_amount_discount(), 6
+                self._l10n_ec_compute_amount_discount(), 2
             ),
             "totalConImpuestos": self.l10n_ec_header_get_total_with_taxes(taxes_data),
             "compensaciones": [],
             "propina": False,
-            "importeTotal": self._l10n_ec_number_format(amount_total, 6),
-            "valorModificacion": self._l10n_ec_number_format(amount_total, 6),
+            "importeTotal": self._l10n_ec_number_format(amount_total, 2),
+            "valorModificacion": self._l10n_ec_number_format(amount_total, 2),
             "moneda": currency_name,
             "pagos": credit_note._l10n_ec_get_payment_data(),
             "valorRetIva": False,
@@ -576,7 +611,7 @@ class AccountEdiDocument(models.Model):
                     msj_str = f"{tipo} [{identificador}] {messaje} {additional_info}"
                     msj_list.append(msj_str)
         except Exception as e:
-            msj_list.append(e)
+            msj_list.append(str(e))
             _logger.info(
                 "can't validate document, clave de acceso %s. ERROR: %s TRACEBACK: %s",
                 self.l10n_ec_xml_access_key,
@@ -683,7 +718,7 @@ class AccountEdiDocument(models.Model):
                 EDI_DATE_FORMAT
             ),
             "totalSinImpuestos": self._l10n_ec_number_format(
-                debit_note.amount_untaxed, 6
+                debit_note.amount_untaxed, 2
             ),
             "totalConImpuestos": self.l10n_ec_header_get_total_with_taxes(taxes_data),
             "importeTotal": self._l10n_ec_number_format(amount_total, 6),
