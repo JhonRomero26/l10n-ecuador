@@ -181,3 +181,6 @@ class TestL10nEcCreditNote(TestL10nECEdiCommon):
             invoice.l10n_ec_xml_access_key,
         )
         self.assertEqual(reverse_move.l10n_ec_reason, "TEST REASON")
+        self.assertEqual(
+            reverse_move.l10n_ec_legacy_document_date, invoice.invoice_date
+        )

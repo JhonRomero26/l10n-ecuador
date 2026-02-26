@@ -160,10 +160,60 @@ class AccountMove(models.Model):
         return journal
 
     def action_post(self):
+        return super().action_post()
+
+    def _post(self, soft=True):
         for move in self:
             if move.company_id.account_fiscal_country_id.code == "EC":
+                move._l10n_ec_autofill_refund_legacy_data()
                 move._l10n_ec_validate_quantity_move_line()
-        return super().action_post()
+        return super()._post(soft=soft)
+
+    def _l10n_ec_autofill_refund_legacy_data(self):
+        """Fill legacy fields for EC refunds created from reversals (e.g. POS)."""
+        for move in self:
+            if move.country_code != "EC" or move.move_type != "out_refund":
+                continue
+            origin_move = move._l10n_ec_get_refund_origin_move()
+            if not origin_move:
+                continue
+            vals = {}
+            if not move.l10n_ec_legacy_document_number:
+                vals["l10n_ec_legacy_document_number"] = (
+                    origin_move.l10n_latam_document_number
+                    or origin_move.l10n_ec_legacy_document_number
+                    or self._l10n_ec_extract_document_number(origin_move.name)
+                    or self._l10n_ec_extract_document_number(origin_move.ref)
+                )
+            if not move.l10n_ec_legacy_document_date:
+                vals["l10n_ec_legacy_document_date"] = (
+                    origin_move.invoice_date or origin_move.date or move.invoice_date
+                )
+            if not move.l10n_ec_legacy_document_authorization:
+                vals["l10n_ec_legacy_document_authorization"] = (
+                    origin_move.l10n_ec_xml_access_key
+                    or origin_move.l10n_ec_electronic_authorization
+                    or origin_move.l10n_ec_legacy_document_authorization
+                )
+            if not move.l10n_ec_reason:
+                vals["l10n_ec_reason"] = _("Refund generated from reversed document")
+            if vals:
+                move.write(vals)
+
+    def _l10n_ec_get_refund_origin_move(self):
+        self.ensure_one()
+        if self.reversed_entry_id:
+            return self.reversed_entry_id
+        if "pos_refunded_invoice_ids" in self._fields and self.pos_refunded_invoice_ids:
+            return self.pos_refunded_invoice_ids[0]
+        return self.env["account.move"]
+
+    @api.model
+    def _l10n_ec_extract_document_number(self, value):
+        if not value:
+            return False
+        match = re.search(r"\d{3}-\d{3}-\d{9}", value)
+        return match.group(0) if match else False
 
     def _is_l10n_ec_is_purchase_liquidation(self):
         self.ensure_one()

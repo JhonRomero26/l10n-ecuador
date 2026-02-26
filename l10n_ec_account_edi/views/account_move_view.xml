@@ -34,22 +34,22 @@
                     <group string="Invoice">
                         <field
                             name="l10n_ec_legacy_document_number"
-                            required="l10n_latam_internal_type in ('credit_note', 'debit_note') and country_code == 'EC'"
+                            required="state == 'draft' and l10n_latam_internal_type in ('credit_note', 'debit_note') and country_code == 'EC'"
                             readonly="state != 'draft'"
                         />
                         <field
                             name="l10n_ec_legacy_document_date"
-                            required="l10n_latam_internal_type in ('credit_note', 'debit_note') and country_code == 'EC'"
+                            required="state == 'draft' and l10n_latam_internal_type in ('credit_note', 'debit_note') and country_code == 'EC'"
                             readonly="state != 'draft'"
                         />
                         <field
                             name="l10n_ec_legacy_document_authorization"
-                            required="l10n_latam_internal_type in ('credit_note', 'debit_note') and country_code == 'EC'"
+                            required="state == 'draft' and l10n_latam_internal_type in ('credit_note', 'debit_note') and country_code == 'EC'"
                             readonly="state != 'draft'"
                         />
                         <field
                             name="l10n_ec_reason"
-                            required="l10n_latam_internal_type in ('credit_note', 'debit_note') and country_code == 'EC'"
+                            required="state == 'draft' and l10n_latam_internal_type in ('credit_note', 'debit_note') and country_code == 'EC'"
                             readonly="state != 'draft'"
                         />
                     </group>
