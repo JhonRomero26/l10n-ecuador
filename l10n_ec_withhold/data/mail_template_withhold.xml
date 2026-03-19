@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo noupdate="1">
+    <record id="email_template_edi_withhold" model="mail.template">
+        <field name="name">Withholding: Sending</field>
+        <field name="model_id" ref="account.model_account_move" />
+        <field
+            name="email_from"
+        >{{ (object.company_id.email_formatted or user.email_formatted) }}</field>
+        <field name="partner_to">{{ object.partner_id.id }}</field>
+        <field
+            name="subject"
+        >{{ object.company_id.name }} Withholding Certificate (Ref {{ object.name or 'n/a' }})</field>
+        <field
+            name="description"
+        >Sent to partners with their withholding document in attachment</field>
+        <field name="body_html" type="html">
+            <div style="margin: 0px; padding: 0px;">
+                <t
+                    t-set="withhold_amount"
+                    t-value="sum(object.l10n_ec_withhold_line_ids.mapped('l10n_ec_withhold_tax_amount'))"
+                />
+                <t
+                    t-set="related_invoices"
+                    t-value="object.line_ids.mapped('l10n_ec_invoice_withhold_id')"
+                />
+                <t
+                    t-set="invoice_total_amount"
+                    t-value="abs(sum(related_invoices.mapped('amount_total')))"
+                />
+                <t
+                    t-set="invoice_net_amount"
+                    t-value="abs(sum(related_invoices.mapped('amount_residual')))"
+                />
+                <p style="margin: 0px; padding: 0px; font-size: 13px;">
+        Dear
+        <t t-if="object.partner_id.parent_id">
+            <t t-out="object.partner_id.name or ''" /> (<t
+                    t-out="object.partner_id.parent_id.name or ''"
+                />),
+        </t>
+        <t t-else="">
+            <t t-out="object.partner_id.name or ''" />,
+        </t>
+        <br /><br />
+        Attached is your withholding certificate
+        <t t-if="object.name">
+                    <span style="font-weight:bold;" t-out="object.name or ''" />
+                </t>
+        <t t-else="">
+            with no reference
+        </t>
+        <t t-if="related_invoices">
+            , corresponding to invoice
+            <span
+                    style="font-weight:bold;"
+                    t-out="', '.join(related_invoices.mapped('name'))"
+                />
+            issued by <t t-out="object.company_id.name or ''" />.
+        </t>
+        <t t-else="">
+            issued by <t t-out="object.company_id.name or ''" />.
+        </t>
+        <br /><br />
+        Summary:
+        <br />- Invoice total:
+        <span
+                    style="font-weight:bold;"
+                    t-out="format_amount(invoice_total_amount, object.currency_id) or ''"
+                />
+        <br />- Amount withheld:
+        <span
+                    style="font-weight:bold;"
+                    t-out="format_amount(withhold_amount, object.currency_id) or ''"
+                />
+        <br />- Net amount payable:
+        <span
+                    style="font-weight:bold;"
+                    t-out="format_amount(invoice_net_amount, object.currency_id) or ''"
+                />
+        <br /><br />
+        Contact us if you have any questions.
+        <t t-if="not is_html_empty(object.invoice_user_id.signature)">
+                    <br />
+                    <br />
+                    <t t-out="object.invoice_user_id.signature or ''" />
+                </t>
+    </p>
+            </div>
+        </field>
+        <field name="report_template_ids" eval="[]" />
+        <field name="lang">{{ object.partner_id.lang }}</field>
+        <field name="auto_delete" eval="True" />
+    </record>
+</odoo>

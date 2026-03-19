@@ -11,9 +11,11 @@ from odoo.addons.l10n_ec_account_edi.models.account_edi_document import (
 from odoo.addons.l10n_ec_account_edi.tests.sri_response import patch_service_sri
 from odoo.addons.l10n_ec_account_edi.tests.test_edi_common import TestL10nECEdiCommon
 
+from .test_common import TestL10nECWithholdCommon
+
 
 @tagged("post_install_l10n", "post_install", "-at_install")
-class TestL10nPurchaseWithhold(TestL10nECEdiCommon, TestAccountMoveSendCommon):
+class TestL10nPurchaseWithhold(TestL10nECWithholdCommon, TestAccountMoveSendCommon):
     @classmethod
     @TestL10nECEdiCommon.setup_chart_template("ec")
     def setUpClass(cls):
@@ -125,7 +127,7 @@ class TestL10nPurchaseWithhold(TestL10nECEdiCommon, TestAccountMoveSendCommon):
             wizard.button_validate()
 
     @patch_service_sri
-    def test_04_l10n_ec_withhold_without_taxes(self):
+    def test_05_l10n_ec_withhold_without_taxes(self):
         """
         Create a Invoice without taxes, and try create withhold
         a exception must be raised because the base amount is zero
@@ -152,7 +154,7 @@ class TestL10nPurchaseWithhold(TestL10nECEdiCommon, TestAccountMoveSendCommon):
             wizard.button_validate()
 
     @patch_service_sri
-    def test_04_l10n_ec_withhold_two_invoices(self):
+    def test_06_l10n_ec_withhold_two_invoices(self):
         # purchase withhold is only for one invoice
         self.partner_ruc.property_account_position_id = self.position_require_withhold
         invoice = self._l10n_ec_create_in_invoice(
@@ -175,7 +177,7 @@ class TestL10nPurchaseWithhold(TestL10nECEdiCommon, TestAccountMoveSendCommon):
             (invoice | invoice2).action_try_create_ecuadorian_withhold()
 
     @patch_service_sri
-    def test_05_l10n_ec_new_electronic_withhold(self):
+    def test_07_l10n_ec_new_electronic_withhold(self):
         self.env.user.write({"email": "test@example.com"})
         self.env.user.partner_id.write({"email": "test@example.com"})
         self.company.partner_id.write({"email": "info@company.com"})
@@ -222,7 +224,7 @@ class TestL10nPurchaseWithhold(TestL10nECEdiCommon, TestAccountMoveSendCommon):
         self.assertEqual(
             withhold.l10n_ec_authorization_date, edi_doc.l10n_ec_authorization_date
         )
-        # Envio de email
+        # email sending
         wizard_send = self.create_send_and_print(withhold)
         wizard_send.action_send_and_print()
         self.assertTrue(withhold.is_move_sent)
@@ -230,8 +232,22 @@ class TestL10nPurchaseWithhold(TestL10nECEdiCommon, TestAccountMoveSendCommon):
         action_withhold = invoice.action_show_l10n_ec_withholds()
         self.assertEqual(action_withhold["res_id"], withhold.id)
 
+    def test_08_l10n_ec_suggest_tax_from_taxpayer_type(self):
+        taxpayer_type = self.env.ref("l10n_ec_withhold.l10n_ec_taxpayer_type_13")
+        taxpayer_type = taxpayer_type.with_company(self.company)
+        taxpayer_type.profit_withhold_tax_id = self.tax_withhold_profit_303
+        self.partner_ruc.l10n_ec_taxpayer_type_id = taxpayer_type
+
+        invoice = self._l10n_ec_create_in_invoice(self.partner_ruc, auto_post=True)
+        wizard_form = self._prepare_new_wizard_withhold_purchase(invoice)
+        with wizard_form.withhold_line_ids.new() as line:
+            line.invoice_id = invoice
+            line.l10n_ec_tax_support = "01"
+            line.tax_group_withhold_id = self.tax_withhold_profit_303.tax_group_id
+            self.assertEqual(line.tax_withhold_id, self.tax_withhold_profit_303)
+
     @patch_service_sri
-    def test_06_l10n_ec_check_withhold_values(self):
+    def test_09_l10n_ec_check_withhold_values(self):
         # check withhold amount and base amount related with invoice
         self._setup_edi_company_ec()
         self.partner_ruc.property_account_position_id = self.position_require_withhold
@@ -267,10 +283,7 @@ class TestL10nPurchaseWithhold(TestL10nECEdiCommon, TestAccountMoveSendCommon):
         # TODO: check values from some taxes
 
     @patch_service_sri
-    def test_07_l10n_ec_cancel_electronic_withhold(self):
-        def mock_l10n_ec_edi_send_xml_with_auth(edi_doc_instance, client_ws):
-            return self._get_response_with_auth(edi_doc_instance)
-
+    def test_10_l10n_ec_cancel_electronic_withhold(self):
         def mock_l10n_ec_edi_process_response_auth_cancelled(instance, response):
             is_auth = False
             msj_list = []

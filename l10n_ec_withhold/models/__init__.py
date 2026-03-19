@@ -4,6 +4,7 @@ from . import account_move
 from . import account_move_send
 from . import res_partner
 from . import account_fiscal_position
+from . import l10n_ec_taxpayer_type
 from . import account_edi_document
 from . import account_chart_template
 from . import ir_actions_report

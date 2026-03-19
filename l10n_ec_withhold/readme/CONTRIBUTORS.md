@@ -4,3 +4,4 @@
 - Jorge Luis (https://github.com/mestizosdev)
 - Luis Romero (https://github.com/lojanet)
 - Carlos Lopez (https://github.com/celm1990)
+- Geovany Dutan (https://github.com/geovannydutanm)

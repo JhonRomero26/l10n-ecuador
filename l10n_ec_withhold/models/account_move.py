@@ -19,7 +19,7 @@ class AccountMove(models.Model):
     l10n_ec_withhold_line_ids = fields.One2many(
         comodel_name="account.move.line",
         inverse_name="l10n_ec_withhold_id",
-        string="Lineas de retencion",
+        string="Withholding Lines",
         readonly=True,
     )
     l10n_ec_withhold_ids = fields.Many2many(

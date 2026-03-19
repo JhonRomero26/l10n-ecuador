@@ -110,8 +110,9 @@ class WizardCreateSaleWithhold(models.TransientModel):
             if result:
                 raise UserError(
                     _(
-                        f"Invoice {line.invoice_id.name} already exist in withhold "
-                        f"{result.move_id.name}"
+                        "Invoice %(invoice)s already exist in withhold %(withhold)s",
+                        invoice=line.invoice_id.name,
+                        withhold=result.move_id.name,
                     )
                 )
 
@@ -125,7 +126,9 @@ class WizardCreateSaleWithhold(models.TransientModel):
             ]
         )
         if withhold_count > 0:
-            raise UserError(_(f"Withhold {self.document_number} already exist"))
+            raise UserError(
+                _("Withhold %(number)s already exist", number=self.document_number)
+            )
 
     def validate_selected_invoices(self):
         if len(self.withhold_line_ids.invoice_id) != len(self.invoice_ids):
@@ -138,9 +141,11 @@ class WizardCreateSaleWithhold(models.TransientModel):
             if self.issue_date < invoice.invoice_date:
                 raise UserError(
                     _(
-                        f"Withhold date: {self.issue_date} "
+                        "Withhold date: %(withhold_date)s "
                         "should be equal or major "
-                        f"that invoice date: {invoice.invoice_date}"
+                        "than invoice date: %(invoice_date)s",
+                        withhold_date=self.issue_date,
+                        invoice_date=invoice.invoice_date,
                     )
                 )
         self.validate_selected_invoices()
@@ -159,8 +164,8 @@ class WizardCreateSaleWithhold(models.TransientModel):
 
     def _post_link_and_reconcile(self, move, total_by_invoice, account_type):
         """
-        Postea, linkea a facturas y reconcilia:
-        - account_type: 'liability_payable' (compra) o 'asset_receivable' (venta)
+        Link the withholding move to invoices and reconcile.
+        account_type: 'liability_payable' (purchase) or 'asset_receivable' (sale)
         """
         for invoice in total_by_invoice:
             invoice.write({"l10n_ec_withhold_ids": [Command.link(move.id)]})

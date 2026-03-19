@@ -54,7 +54,7 @@ class WizardAbstractWithhold(models.AbstractModel):
         return dict(selection).get(value)
 
     def _create_withholding_move(self):
-        """Crea el move de retención, asigna secuencia y referencia; retorna el move."""
+        """Create withholding move, assign sequence/reference and return it."""
         vals = self._prepare_withholding_vals()
         move = self.env["account.move"].create(vals)
         self._set_document_number(move)
@@ -62,10 +62,10 @@ class WizardAbstractWithhold(models.AbstractModel):
 
     def _build_line_commands(self, move, counterpart="payable"):
         """
-        Arma Command.create(...) de líneas:
-        - Líneas base + contrapartidas por impuesto por cada wline.
-        - Una contrapartida agregada por factura (totales).
-        counterpart: 'payable' (compra) o 'receivable' (venta)
+        Build Command.create(...) entries for withholding lines:
+        - Base lines + tax counterpart per withhold line.
+        - One aggregated counterpart per invoice (totals).
+        counterpart: 'payable' (purchase) or 'receivable' (sale)
         """
         self.ensure_one()
         cmds = []
@@ -107,9 +107,11 @@ class WizardAbstractWithhold(models.AbstractModel):
         return cmds, totals
 
     def _try_reconcile_withholding_moves(self, withholding, invoice, account_type):
-        assert account_type in ["asset_receivable", "liability_payable"], _(
-            "Account type not supported, this must be receivable or payable"
-        )
+        if account_type not in ["asset_receivable", "liability_payable"]:
+            raise ValueError(
+                "account_type must be 'asset_receivable' or 'liability_payable', "
+                f"got {account_type!r}"
+            )
         aml_to_reconcile = invoice.line_ids.filtered(
             lambda line: line.account_id.account_type == account_type
         )
@@ -133,9 +135,10 @@ class WizardAbstractWithholdLine(models.AbstractModel):
         comodel_name="account.tax",
         string="Withholding tax",
     )
-    base_amount = fields.Float(string="Amount Base", readonly=True)
+    base_amount = fields.Float(string="Amount Base", digits="Account", readonly=True)
     withhold_amount = fields.Float(
         string="Amount Withhold",
+        digits="Account",
         compute="_compute_withholding_amount",
         store=True,
     )

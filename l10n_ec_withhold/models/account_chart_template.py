@@ -8,10 +8,10 @@ class AccountChartTemplate(models.AbstractModel):
 
     @api.model
     def _10n_ec_withhold_post_init(self):
-        """ "
-        Parametrizaciones iniciales en compañias ecuatorianas
-        Esto cuando se instale el modulo la primera vez
-        ya que no se puede cargar junto con el plan contable de l10n_ec
+        """
+        Initial setup for Ecuadorian companies on first module install.
+        Runs after installation because it cannot be loaded together
+        with the l10n_ec chart of accounts.
         """
         all_companies = self.env["res.company"].search([("chart_template", "=", "ec")])
         for company in all_companies:
