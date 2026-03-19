@@ -107,17 +107,29 @@
                             <br />
                             Nº.
                             <span t-out="document_number" />
+                            <t
+                            t-set="l10n_ec_auth_key"
+                            t-value="edi_doc.l10n_ec_xml_access_key or o.l10n_ec_xml_access_key or o.l10n_ec_sri_authorization_number or o.l10n_ec_electronic_authorization or ''"
+                        />
+                            <t
+                            t-set="l10n_ec_auth_date"
+                            t-value="edi_doc.l10n_ec_authorization_date or o.l10n_ec_authorization_date"
+                        />
                             <br />
                             <br />
+                            <t t-if="l10n_ec_auth_key">
                             <strong>NÚMERO DE AUTORIZACION</strong>
                             <br />
-                            <span t-field="edi_doc.l10n_ec_xml_access_key" />
+                            <span t-out="l10n_ec_auth_key" />
                             <br />
                             <br />
+                        </t>
+                            <t t-if="l10n_ec_auth_date">
                             <strong>Fecha y hora de autorización:</strong>
-                            <span t-field="edi_doc.l10n_ec_authorization_date" />
+                            <span t-out="l10n_ec_auth_date" />
                             <br />
                             <br />
+                        </t>
                             <strong>AMBIENTE:</strong>
                             <span t-field="company.l10n_ec_type_environment" />
                             <br />
@@ -130,15 +142,15 @@
                             <br />
                             <div
                             class="oe_product_image text-center"
-                            t-if="edi_doc.l10n_ec_xml_access_key"
+                            t-if="l10n_ec_auth_key"
                         >
                             <img
                                 class="barcode"
-                                t-att-src="'/report/barcode/?barcode_type=%s&amp;value=%s&amp;width=%s&amp;height=%s&amp;' % ('Code128', edi_doc.l10n_ec_xml_access_key, 400, 100)"
+                                t-att-src="'/report/barcode/?barcode_type=%s&amp;value=%s&amp;width=%s&amp;height=%s&amp;' % ('Code128', l10n_ec_auth_key, 400, 100)"
                                 alt="Clave de Acceso"
                             />
                             <br />
-                            <span t-field="edi_doc.l10n_ec_xml_access_key" />
+                            <span t-out="l10n_ec_auth_key" />
                         </div>
                             <br />
                         </div>
