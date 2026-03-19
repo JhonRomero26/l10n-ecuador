@@ -68,6 +68,7 @@ Contributors
 - Renan Nazate
 - Gabriel
 - Leonardo
+- Geovany Dutan (https://github.com/geovannydutanm)
 
 Maintainers
 -----------
