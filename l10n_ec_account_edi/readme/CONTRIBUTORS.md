@@ -4,3 +4,4 @@
 - Yazber Romero
 - Renan Nazate
 - Jorge Quiguango
+- Geovany Dutan (https://github.com/geovannydutanm)
