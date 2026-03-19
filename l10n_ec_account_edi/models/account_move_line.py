@@ -4,10 +4,28 @@ from odoo import models
 class AccountMoveLine(models.Model):
     _inherit = "account.move.line"
 
+    def _l10n_ec_get_line_edi_amounts(self):
+        self.ensure_one()
+        edi_values = self._prepare_edi_vals_to_export() or {}
+        price_discount = edi_values.get("price_discount")
+        if price_discount is None:
+            price_discount = (self.price_unit * self.quantity) * (
+                (self.discount or 0.0) / 100.0
+            )
+        price_subtotal = edi_values.get("price_subtotal", self.price_subtotal)
+        price_subtotal_before_discount = edi_values.get(
+            "price_subtotal_before_discount", price_subtotal + price_discount
+        )
+        return {
+            "price_discount": price_discount,
+            "price_subtotal": price_subtotal,
+            "price_subtotal_before_discount": price_subtotal_before_discount,
+        }
+
     def l10n_ec_get_invoice_edi_data(self, taxes_data):
         self.ensure_one()
         EdiDocument = self.env["account.edi.document"]
-        edi_values = self._prepare_edi_vals_to_export()
+        edi_values = self._l10n_ec_get_line_edi_amounts()
         res = {
             "codigoPrincipal": EdiDocument._l10n_ec_clean_str(
                 self.product_id.default_code or "NA"
@@ -21,13 +39,13 @@ class AccountMoveLine(models.Model):
             ),
             "cantidad": EdiDocument._l10n_ec_number_format(self.quantity, decimals=6),
             "precioUnitario": EdiDocument._l10n_ec_number_format(
-                self.price_unit, decimals=6
+                abs(self.price_unit), decimals=6
             ),
             "descuento": EdiDocument._l10n_ec_number_format(
-                edi_values["price_discount"], decimals=6
+                abs(edi_values.get("price_discount", 0.0)), decimals=6
             ),
             "precioTotalSinImpuesto": EdiDocument._l10n_ec_number_format(
-                edi_values["price_subtotal_before_discount"], decimals=6
+                abs(edi_values.get("price_subtotal", 0.0)), decimals=6
             ),
             "detallesAdicionales": self._l10n_ec_get_invoice_edi_additional_data(),
             "impuestos": self._l10n_ec_get_invoice_edi_taxes(taxes_data),
@@ -37,7 +55,7 @@ class AccountMoveLine(models.Model):
     def l10n_ec_get_credit_note_edi_data(self, taxes_data):
         self.ensure_one()
         EdiDocument = self.env["account.edi.document"]
-        edi_values = self._prepare_edi_vals_to_export()
+        edi_values = self._l10n_ec_get_line_edi_amounts()
         res = {
             "codigoInterno": EdiDocument._l10n_ec_clean_str(
                 self.product_id.default_code or "NA"
@@ -48,13 +66,13 @@ class AccountMoveLine(models.Model):
             ),
             "cantidad": EdiDocument._l10n_ec_number_format(self.quantity, decimals=6),
             "precioUnitario": EdiDocument._l10n_ec_number_format(
-                self.price_unit, decimals=6
+                abs(self.price_unit), decimals=6
             ),
             "descuento": EdiDocument._l10n_ec_number_format(
-                edi_values["price_discount"], decimals=6
+                abs(edi_values.get("price_discount", 0.0)), decimals=6
             ),
             "precioTotalSinImpuesto": EdiDocument._l10n_ec_number_format(
-                edi_values["price_subtotal_before_discount"], decimals=6
+                abs(edi_values.get("price_subtotal", 0.0)), decimals=6
             ),
             "detallesAdicionales": self._l10n_ec_get_credit_note_edi_additional_data(),
             "impuestos": self._l10n_ec_get_credit_note_edi_taxes(taxes_data),
@@ -95,7 +113,7 @@ class AccountMoveLine(models.Model):
                 (self.product_id.name or self.name or "NA")[:300]
             ),
             "precioUnitario": EdiDocument._l10n_ec_number_format(
-                self.price_unit, decimals=6
+                abs(self.price_unit), decimals=6
             ),
         }
         return detail_dict

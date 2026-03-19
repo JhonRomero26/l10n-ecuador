@@ -230,11 +230,11 @@ class AccountEdiFormat(models.Model):
                 document.write({"l10n_ec_is_edi_doc": True})
             errors = []
             is_auth = False
+            attachment = False
             try:
                 for edi_doc in edi_docs:
                     attachment = edi_doc.attachment_id
                     xml_file = edi_doc._l10n_ec_render_xml_edi()
-                    _logger.debug(xml_file)
                     edi_doc._l10n_ec_action_check_xsd(xml_file)
                     xml_signed = company.l10n_ec_key_type_id.action_sign(xml_file)
                     if not attachment:
@@ -258,20 +258,10 @@ class AccountEdiFormat(models.Model):
                             }
                         )
                     if client_send is None or auth_client is None:
-                        res.update(
-                            {
-                                document: {
-                                    "success": False,
-                                    "error": _(
-                                        "Can't connect to SRI Webservice, try in few "
-                                        "minutes"
-                                    ),
-                                    "attachment": attachment,
-                                    "blocking_level": "error",
-                                }
-                            }
+                        errors.append(
+                            _("Can't connect to SRI Webservice, try in few minutes")
                         )
-                        continue
+                        break
                     # intentar consultar el documento previamente autorizado
                     is_sent = False
                     msj = []
@@ -305,14 +295,15 @@ class AccountEdiFormat(models.Model):
                         ex,
                     )
                 )
+            final_errors = [] if is_auth else errors
             blocking_level = False
-            if errors:
+            if final_errors:
                 blocking_level = "error"
             res.update(
                 {
                     document: {
-                        "success": True if not errors and is_auth else False,
-                        "error": "".join(errors),
+                        "success": bool(is_auth and not final_errors),
+                        "error": "".join(map(str, final_errors)),
                         "attachment": attachment,
                         "blocking_level": blocking_level,
                     }

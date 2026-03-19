@@ -2,6 +2,7 @@ import logging
 import re
 import traceback
 from datetime import datetime
+from decimal import Decimal
 from os import path
 from random import randint
 
@@ -108,15 +109,49 @@ class AccountEdiDocument(models.Model):
 
     def l10n_ec_header_get_total_with_taxes(self, taxes_data):
         self.ensure_one()
-        res = []
+        grouped_taxes = {}
         per_record = (taxes_data or {}).get("tax_details_per_record") or {}
         for rec_vals in per_record.values():
             tax_details = rec_vals.get("tax_details") or {}
             for td in tax_details.values():
                 taxes_data_list = td.get("taxes_data") or []
-                if not taxes_data_list:
-                    continue
-                res.append(self._l10n_ec_prepare_tax_vals_edi(taxes_data_list[0]))
+                for tax_data in taxes_data_list:
+                    tax = tax_data.get("tax")
+                    if not tax:
+                        trl = tax_data.get("tax_repartition_line")
+                        tax = trl.tax_id if trl else None
+                    if not tax or not tax.tax_group_id:
+                        continue
+                    codigo = tax.tax_group_id.l10n_ec_xml_fe_code
+                    codigo_porcentaje = tax.l10n_ec_xml_fe_code
+                    if not (codigo and codigo_porcentaje):
+                        continue
+                    key = (codigo, codigo_porcentaje)
+                    entry = grouped_taxes.setdefault(
+                        key,
+                        {
+                            "tax": tax,
+                            "base": Decimal("0.0"),
+                            "valor": Decimal("0.0"),
+                        },
+                    )
+                    base_amount = tax_data.get("base_amount_currency") or 0.0
+                    tax_amount = tax_data.get("tax_amount_currency") or 0.0
+                    entry["base"] += Decimal(str(base_amount))
+                    entry["valor"] += Decimal(str(tax_amount))
+        res = []
+        for (codigo, codigo_porcentaje), aggregated in grouped_taxes.items():
+            tax = aggregated["tax"]
+            base_amount = abs(aggregated["base"])
+            valor = abs(aggregated["valor"])
+            tax_vals = {
+                "codigo": codigo,
+                "codigoPorcentaje": codigo_porcentaje,
+                "baseImponible": self._l10n_ec_number_format(float(base_amount), 2),
+                "tarifa": self._l10n_ec_number_format(abs(tax.amount or 0.0), 2),
+                "valor": self._l10n_ec_number_format(float(valor), 2),
+            }
+            res.append(tax_vals)
         return res
 
     def _l10n_ec_get_environment(self):
@@ -464,7 +499,35 @@ class AccountEdiDocument(models.Model):
     def _l10n_ec_get_info_credit_note(self):
         self.ensure_one()
         credit_note = self.move_id
-        date_invoice = credit_note.invoice_date
+        # POS reversals can miss these values before EDI generation time.
+        credit_note._l10n_ec_autofill_refund_legacy_data()
+        origin_move = credit_note._l10n_ec_get_refund_origin_move()
+        date_invoice = fields.Date.to_date(
+            credit_note.invoice_date
+            or credit_note.date
+            or fields.Date.context_today(self)
+        )
+        legacy_support_date = fields.Date.to_date(
+            credit_note.l10n_ec_legacy_document_date
+            or origin_move.invoice_date
+            or origin_move.date
+            or date_invoice
+        )
+        legacy_document_number = (
+            credit_note.l10n_ec_legacy_document_number
+            or origin_move.l10n_latam_document_number
+            or credit_note._l10n_ec_extract_document_number(origin_move.name)
+            or credit_note._l10n_ec_extract_document_number(origin_move.ref)
+        )
+        if not legacy_document_number:
+            raise UserError(
+                _(
+                    "External Document Number is required for Credit Notes. "
+                    "It must match 001-001-000000001 format."
+                )
+            )
+        if not legacy_support_date:
+            raise UserError(_("External Document Date is required for Credit Notes."))
         company = credit_note.company_id or self.env.company
         taxes_data = credit_note._l10n_ec_get_taxes_grouped_by_tax_group()
         amount_total = abs(taxes_data.get("base_amount") + taxes_data.get("tax_amount"))
@@ -480,11 +543,10 @@ class AccountEdiDocument(models.Model):
                 company.partner_id.property_account_position_id
             ),
             "codDocModificado": "01",
-            "numDocModificado": credit_note.l10n_ec_legacy_document_number,
-            "fechaEmisionDocSustento": (
-                credit_note.l10n_ec_legacy_document_date
-            ).strftime(EDI_DATE_FORMAT),
-            "motivo": credit_note.l10n_ec_reason,
+            "numDocModificado": legacy_document_number,
+            "fechaEmisionDocSustento": legacy_support_date.strftime(EDI_DATE_FORMAT),
+            "motivo": credit_note.l10n_ec_reason
+            or _("Refund generated from reversed document"),
             "tipoIdentificacionComprador": (
                 credit_note.l10n_ec_get_identification_type()
             ),
@@ -576,7 +638,7 @@ class AccountEdiDocument(models.Model):
                     msj_str = f"{tipo} [{identificador}] {messaje} {additional_info}"
                     msj_list.append(msj_str)
         except Exception as e:
-            msj_list.append(e)
+            msj_list.append(str(e))
             _logger.info(
                 "can't validate document, clave de acceso %s. ERROR: %s TRACEBACK: %s",
                 self.l10n_ec_xml_access_key,
@@ -657,7 +719,19 @@ class AccountEdiDocument(models.Model):
         self.ensure_one()
         debit_note = self.move_id
         company = debit_note.company_id or self.env.company
-        date_debit = debit_note.invoice_date
+        date_debit = fields.Date.to_date(
+            debit_note.invoice_date
+            or debit_note.date
+            or fields.Date.context_today(self)
+        )
+        legacy_support_date = fields.Date.to_date(
+            debit_note.l10n_ec_legacy_document_date
+            or debit_note.invoice_date
+            or debit_note.date
+            or date_debit
+        )
+        if not legacy_support_date:
+            raise UserError(_("External Document Date is required for Debit Notes."))
         taxes_data = debit_note._l10n_ec_get_taxes_grouped_by_tax_group()
         amount_total = abs(taxes_data.get("base_amount") + taxes_data.get("tax_amount"))
 
@@ -679,9 +753,7 @@ class AccountEdiDocument(models.Model):
             # Debit Note data
             "codDocModificado": "01",
             "numDocModificado": debit_note.l10n_ec_legacy_document_number,
-            "fechaEmisionDocSustento": debit_note.l10n_ec_legacy_document_date.strftime(
-                EDI_DATE_FORMAT
-            ),
+            "fechaEmisionDocSustento": legacy_support_date.strftime(EDI_DATE_FORMAT),
             "totalSinImpuestos": self._l10n_ec_number_format(
                 debit_note.amount_untaxed, 2
             ),
