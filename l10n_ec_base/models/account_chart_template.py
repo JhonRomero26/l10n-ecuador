@@ -9,6 +9,23 @@ from ..data.account_tax_group_data import TAX_GROUP_DATA_EC
 class AccountChartTemplate(models.AbstractModel):
     _inherit = "account.chart.template"
 
+    def _sanitize_ec_tax_template_data(self, tax_data):
+        """Drop broken manual repartition data from the EC tax CSV.
+
+        The Ecuador tax CSV currently defines custom ``repartition_line_ids`` with
+        only one invoice base line and human-readable tags such as
+        ``+303 (Reporte 103)``. During chart-template loading, account expects a
+        complete invoice/refund repartition and resolves tags as XML IDs, so these
+        lines break a clean install. Let Odoo create the default repartition lines
+        instead.
+        """
+        clean_data = {}
+        for xmlid, values in tax_data.items():
+            clean_values = dict(values)
+            clean_values.pop("repartition_line_ids", None)
+            clean_data[xmlid] = clean_values
+        return clean_data
+
     def _load(self, template_code, company, install_demo, force_create=True):
         """Set tax calculation rounding method required in Ecuadorian localization"""
         res = super()._load(template_code, company, install_demo, force_create)
@@ -60,7 +77,8 @@ class AccountChartTemplate(models.AbstractModel):
 
     @template("ec", "account.tax")
     def _get_ec_new_account_tax(self):
-        return self._parse_csv("ec", "account.tax", module="l10n_ec_base")
+        tax_data = self._parse_csv("ec", "account.tax", module="l10n_ec_base")
+        return self._sanitize_ec_tax_template_data(tax_data)
 
     @template("ec", "account.journal")
     def _get_ec_new_account_journal(self):
