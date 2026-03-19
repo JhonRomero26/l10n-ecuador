@@ -7,9 +7,11 @@ from odoo.tests import Form, tagged
 from odoo.addons.l10n_ec_account_edi.tests.sri_response import patch_service_sri
 from odoo.addons.l10n_ec_account_edi.tests.test_edi_common import TestL10nECEdiCommon
 
+from .test_common import TestL10nECWithholdCommon
+
 
 @tagged("post_install_l10n", "post_install", "-at_install", "sale_withhold")
-class TestL10nSaleWithhold(TestL10nECEdiCommon):
+class TestL10nSaleWithhold(TestL10nECWithholdCommon):
     @classmethod
     @TestL10nECEdiCommon.setup_chart_template("ec")
     def setUpClass(cls):

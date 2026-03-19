@@ -52,7 +52,6 @@
                             <field
                                 name="withhold_totals"
                                 class="oe_subtotal_footer_separator"
-                                style="font-size: 21px;"
                             />
                         </group>
                     </page>

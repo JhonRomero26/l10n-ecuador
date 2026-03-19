@@ -32,8 +32,8 @@ class WizardCreatePurchaseWithhold(models.TransientModel):
 
     def _has_base_for_line(self, wline):
         """
-        Debe existir al menos una línea de factura con soporte coincidente
-        e impuestos.
+        Return True if at least one invoice line matches the withhold
+        line tax support and has taxes configured.
         """
         inv = wline.invoice_id
         target_support = wline.l10n_ec_tax_support
@@ -44,7 +44,7 @@ class WizardCreatePurchaseWithhold(models.TransientModel):
         return False
 
     def _validate_withhold_bases(self):
-        """Valida que existan bases imponibles coherentes por línea de retención."""
+        """Validate that consistent taxable bases exist for each withholding line."""
         self.ensure_one()
         if not self.withhold_line_ids:
             raise UserError(_("Please add some withholding lines before continue"))
@@ -67,12 +67,13 @@ class WizardCreatePurchaseWithhold(models.TransientModel):
 
     def _post_link_and_reconcile(self, move, total_by_invoice, account_type):
         """
-        Postea, linkea a facturas y reconcilia:
-        - account_type: 'liability_payable' (compra) o 'asset_receivable' (venta)
+        Link the withholding move to invoices and reconcile.
+        account_type: 'liability_payable' (purchase) or 'asset_receivable' (sale)
         """
         invoices = self.withhold_line_ids.mapped("invoice_id")
         invoices.write({"l10n_ec_withhold_ids": [Command.link(move.id)]})
-        self._try_reconcile_withholding_moves(move, invoices, account_type)
+        for invoice in invoices:
+            self._try_reconcile_withholding_moves(move, invoice, account_type)
         move.line_ids.filtered("tax_ids").write({"l10n_ec_withhold_id": move.id})
 
     def button_validate(self):
@@ -107,6 +108,41 @@ class WizardPurchaseWithholdLine(models.TransientModel):
         string="Tax Support",
         copy=False,
     )
+
+    def _l10n_ec_get_suggested_withhold_tax(self):
+        self.ensure_one()
+        taxpayer_type = self.invoice_id.commercial_partner_id.l10n_ec_taxpayer_type_id
+        if not taxpayer_type or not self.tax_group_withhold_id:
+            return self.env["account.tax"]
+
+        withhold_type = self.tax_group_withhold_id.l10n_ec_type
+        if withhold_type == "withhold_income_purchase":
+            tax = taxpayer_type.with_company(
+                self.invoice_id.company_id
+            ).profit_withhold_tax_id
+        elif withhold_type == "withhold_vat_purchase":
+            has_goods = any(
+                line.product_id
+                and line.product_id.product_tmpl_id.detailed_type
+                in ("product", "consu")
+                for line in self.invoice_id.invoice_line_ids
+            )
+            field_name = (
+                "vat_goods_withhold_tax_id"
+                if has_goods
+                else "vat_services_withhold_tax_id"
+            )
+            tax = getattr(
+                taxpayer_type.with_company(self.invoice_id.company_id),
+                field_name,
+                self.env["account.tax"],
+            )
+        else:
+            tax = self.env["account.tax"]
+
+        if tax and tax.tax_group_id == self.tax_group_withhold_id:
+            return tax
+        return self.env["account.tax"]
 
     @api.onchange("invoice_id", "tax_group_withhold_id", "l10n_ec_tax_support")
     def _onchange_withholding_base(self):
@@ -150,6 +186,14 @@ class WizardPurchaseWithholdLine(models.TransientModel):
             }
             return res
         self.base_amount = base_amount
+
+    @api.onchange("tax_group_withhold_id", "invoice_id")
+    def onchange_tax_group_withhold(self):
+        res = super().onchange_tax_group_withhold()
+        suggested_tax = self._l10n_ec_get_suggested_withhold_tax()
+        if suggested_tax:
+            self.tax_withhold_id = suggested_tax
+        return res
 
     def _prepare_basis_vals(self, wizard, tax_data):
         vals = super()._prepare_basis_vals(wizard, tax_data)

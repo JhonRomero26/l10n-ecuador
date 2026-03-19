@@ -63,11 +63,11 @@ class AccountEdiDocument(models.Model):
         return withhold_data
 
     def _l10n_ec_get_type_suject_withholding(self, type_id):
-        # codigos son tomados de la ficha técnica ATS, TABLA 14
+        # Codes taken from ATS technical specification, TABLE 14
         type_suject_withholding = False
-        if type_id == "08":  # Si tipo identificación es del exterior
+        if type_id == "08":  # Foreign identification type
             type_suject_withholding = (
-                "01"  # Persona Natural TODO: obtener si es compañia "02"
+                "01"  # Natural Person EVERYTHING: obtain if it is a company "02"
             )
         return type_suject_withholding
 
@@ -104,7 +104,7 @@ class AccountEdiDocument(models.Model):
 
         docs_sustento = []
         withhold = self.move_id
-        # agrupar los documentos por sustento tributario y factura
+        # Group withhold lines by tax support and invoice
         invoice_line_data = {}
         for withhold_line in withhold.l10n_ec_withhold_line_ids:
             invoice = withhold_line.l10n_ec_invoice_withhold_id

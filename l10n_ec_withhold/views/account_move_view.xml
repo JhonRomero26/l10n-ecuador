@@ -154,13 +154,13 @@
                 <label
                     for="partner_id"
                     string="Customer"
-                    style="font-weight:bold;"
+                    class="fw-bold"
                     invisible="l10n_ec_withholding_type != 'sale'"
                 />
                 <label
                     for="partner_id"
                     string="Vendor"
-                    style="font-weight:bold;"
+                    class="fw-bold"
                     invisible="l10n_ec_withholding_type != 'purchase'"
                 />
             </xpath>
