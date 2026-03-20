@@ -1,11 +1,13 @@
 import logging
 import re
+from base64 import b64encode
 from datetime import timedelta
 from unittest.mock import patch
 
 import requests
 from requests import PreparedRequest, Session
 
+from odoo import fields
 from odoo.exceptions import UserError
 from odoo.tests import Form, tagged
 
@@ -227,6 +229,81 @@ class TestL10nOutInvoice(TestL10nECEdiCommon):
         self.assertEqual(invoice.state, "posted")
         self.assertEqual(invoice.payment_state, "paid")
         self.assertTrue(edi_doc.l10n_ec_xml_access_key)
+
+    def test_l10n_ec_out_invoice_invalidate_stale_cached_pdf(self):
+        self._setup_edi_company_ec()
+        invoice = self._l10n_ec_prepare_edi_out_invoice(auto_post=True)
+        edi_doc = invoice._get_edi_document(self.edi_format)
+        edi_doc.write(
+            {"l10n_ec_authorization_date": fields.Datetime.now() + timedelta(minutes=5)}
+        )
+        stale_pdf = self.env["ir.attachment"].create(
+            {
+                "name": "stale_invoice.pdf",
+                "mimetype": "application/pdf",
+                "datas": b64encode(b"%PDF-1.4 stale"),
+                "res_model": "account.move",
+                "res_id": invoice.id,
+            }
+        )
+        invoice.with_context(skip_readonly_check=True).write(
+            {"invoice_pdf_report_id": stale_pdf.id}
+        )
+        invoice._l10n_ec_invalidate_cached_invoice_pdf()
+        self.assertFalse(invoice.invoice_pdf_report_id)
+        self.assertFalse(stale_pdf.exists())
+
+    def test_l10n_ec_out_invoice_invalidate_cached_pdf_without_authorization(self):
+        self._setup_edi_company_ec()
+        invoice = self._l10n_ec_prepare_edi_out_invoice(auto_post=True)
+        edi_doc = invoice._get_edi_document(self.edi_format)
+        self.assertTrue(edi_doc.l10n_ec_xml_access_key)
+        self.assertFalse(edi_doc.l10n_ec_authorization_date)
+        stale_pdf = self.env["ir.attachment"].create(
+            {
+                "name": "stale_invoice_unauthorized.pdf",
+                "mimetype": "application/pdf",
+                "datas": b64encode(b"%PDF-1.4 stale unauthorized"),
+                "res_model": "account.move",
+                "res_id": invoice.id,
+            }
+        )
+        invoice.with_context(skip_readonly_check=True).write(
+            {"invoice_pdf_report_id": stale_pdf.id}
+        )
+        invoice._l10n_ec_invalidate_cached_invoice_pdf()
+        self.assertFalse(invoice.invoice_pdf_report_id)
+        self.assertFalse(stale_pdf.exists())
+
+    def test_l10n_ec_out_invoice_invalidate_stale_cached_pdf_multicompany(self):
+        self._setup_edi_company_ec()
+        invoice = self._l10n_ec_prepare_edi_out_invoice(auto_post=True)
+        edi_doc = invoice._get_edi_document(self.edi_format)
+        edi_doc.write(
+            {"l10n_ec_authorization_date": fields.Datetime.now() + timedelta(minutes=5)}
+        )
+        stale_pdf = self.env["ir.attachment"].create(
+            {
+                "name": "stale_invoice_multicompany.pdf",
+                "mimetype": "application/pdf",
+                "datas": b64encode(b"%PDF-1.4 stale multicompany"),
+                "res_model": "account.move",
+                "res_id": invoice.id,
+            }
+        )
+        invoice.with_context(skip_readonly_check=True).write(
+            {"invoice_pdf_report_id": stale_pdf.id}
+        )
+        other_company = self.env["res.company"].search(
+            [("id", "!=", invoice.company_id.id)],
+            limit=1,
+        )
+        self.assertTrue(other_company)
+        invoice.with_context(
+            allowed_company_ids=[invoice.company_id.id, other_company.id]
+        )._l10n_ec_invalidate_cached_invoice_pdf()
+        self.assertFalse(invoice.invoice_pdf_report_id)
+        self.assertFalse(stale_pdf.exists())
 
     def test_l10n_ec_out_invoice_default_values_form(self):
         """Test prueba campos computados y valores por defecto

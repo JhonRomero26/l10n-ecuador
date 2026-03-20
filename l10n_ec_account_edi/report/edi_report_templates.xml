@@ -25,7 +25,7 @@
                         </t>
                         <div
                             class="div-bordered div-radius"
-                            t-att-style="style_div_company"
+                            t-att-style="'border: 1px solid #000; border-radius: 6px; padding: 12px; ' + style_div_company"
                         >
                             <div class="text-center text-uppercase">
                                 <strong t-field="company.name" />
@@ -98,7 +98,10 @@
                         </div>
                     </td>
                     <td>
-                        <div class="div-bordered div-radius" style="min-height: 325px;">
+                        <div
+                            class="div-bordered div-radius"
+                            style="min-height: 325px; border: 1px solid #000; border-radius: 6px; padding: 12px;"
+                        >
                             <strong>R.U.C.:</strong>
                             <strong t-field="company.partner_id.vat" />
                             <br />
@@ -144,10 +147,15 @@
                             class="oe_product_image text-center"
                             t-if="l10n_ec_auth_key"
                         >
-                            <img
-                                class="barcode"
-                                t-att-src="'/report/barcode/?barcode_type=%s&amp;value=%s&amp;width=%s&amp;height=%s&amp;' % ('Code128', l10n_ec_auth_key, 400, 100)"
-                                alt="Clave de Acceso"
+                            <div
+                                t-if="o.l10n_ec_xml_access_key"
+                                t-field="o.l10n_ec_xml_access_key"
+                                t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 400, 'height': 100, 'img_alt': 'Clave de Acceso', 'img_style': 'max-width: 100%; height: auto;'}"
+                            />
+                            <div
+                                t-elif="o.l10n_ec_electronic_authorization"
+                                t-field="o.l10n_ec_electronic_authorization"
+                                t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 400, 'height': 100, 'img_alt': 'Clave de Acceso', 'img_style': 'max-width: 100%; height: auto;'}"
                             />
                             <br />
                             <span t-out="l10n_ec_auth_key" />
@@ -160,7 +168,10 @@
         </div>
     </template>
     <template id="electronic_report_common_info_aditional">
-        <div class="div-bordered small">
+        <div
+            class="div-bordered small"
+            style="border: 1px solid #000; border-radius: 4px; padding: 8px;"
+        >
             <strong>Información Adicional</strong>
             <br />
             <t t-if="comment">
@@ -210,7 +221,10 @@
         </div>
     </template>
     <template id="electronic_report_common_payment_info">
-        <table class="table table-sm table-bordered-black small">
+        <table
+            class="table table-sm table-bordered-black small"
+            style="width: 100%; border-collapse: collapse;"
+        >
             <thead>
                 <tr>
                     <th
@@ -246,7 +260,10 @@
         </table>
     </template>
     <template id="electronic_report_common_total_info">
-        <table class="table table-sm table-bordered-black small">
+        <table
+            class="table table-sm table-bordered-black small"
+            style="width: 100%; border-collapse: collapse;"
+        >
             <t t-set="tax_totals" t-value="o.tax_totals" />
             <t t-set="currency" t-value="(o.currency_id or o.company_id.currency_id)" />
             <t t-call="account.document_tax_totals" />

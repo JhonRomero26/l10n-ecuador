@@ -434,7 +434,35 @@ class AccountMove(models.Model):
 
         return response
 
+    def _l10n_ec_invalidate_cached_invoice_pdf(self, force=False):
+        """Drop stale cached invoice PDF so send/portal can regenerate with SRI data."""
+        for move in self:
+            if move.country_code != "EC":
+                continue
+            edi_doc = move.edi_document_ids.filtered(
+                lambda d: d.edi_format_id.code == "l10n_ec_format_sri"
+            )[:1]
+            if not edi_doc:
+                continue
+            pdf_attachment = move.invoice_pdf_report_id
+            if not pdf_attachment:
+                continue
+            if not force:
+                auth_date = edi_doc.l10n_ec_authorization_date
+                if auth_date:
+                    pdf_create_date = fields.Datetime.to_datetime(
+                        pdf_attachment.create_date
+                    )
+                    auth_date = fields.Datetime.to_datetime(auth_date)
+                    if pdf_create_date and auth_date and pdf_create_date >= auth_date:
+                        continue
+            move.with_context(skip_readonly_check=True).write(
+                {"invoice_pdf_report_id": False}
+            )
+            pdf_attachment.sudo().exists().unlink()
+
     def action_send_and_print(self):
+        self._l10n_ec_invalidate_cached_invoice_pdf()
         if any(x._is_l10n_ec_is_purchase_liquidation() for x in self):
             template = self._get_mail_template()
             return {
@@ -453,6 +481,7 @@ class AccountMove(models.Model):
 
     def l10n_ec_send_email(self):
         self.ensure_one()
+        self._l10n_ec_invalidate_cached_invoice_pdf()
         WizardInvoiceSent = self.env["account.move.send.wizard"]
         res = self.with_context(discard_logo_check=True).action_invoice_sent()
         context = res["context"]

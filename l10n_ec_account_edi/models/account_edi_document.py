@@ -712,6 +712,10 @@ class AccountEdiDocument(models.Model):
             self.write(
                 {"l10n_ec_authorization_date": l10n_ec_authorization_date.strftime(DTF)}
             )
+            # Invalidate cached invoice PDF generated before SRI authorization.
+            # This avoids sending stale attachments without auth key/date.
+            if self.move_id and "invoice_pdf_report_id" in self.move_id._fields:
+                self.move_id._l10n_ec_invalidate_cached_invoice_pdf(force=True)
             break
         return is_auth, msj_list
 
