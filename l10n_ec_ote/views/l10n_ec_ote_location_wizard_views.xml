@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="view_l10n_ec_ote_canton_wizard_form" model="ir.ui.view">
+        <field name="name">l10n_ec_ote.canton.wizard.form</field>
+        <field name="model">l10n_ec_ote.canton.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Crear Cantón">
+                <group>
+                    <field name="country_id" string="País" readonly="1" />
+                    <field
+                        name="state_id"
+                        string="Provincia"
+                        domain="[('country_id', '=', country_id)]"
+                    />
+                    <field name="name" />
+                    <field name="code" string="Código" readonly="1" force_save="1" />
+                </group>
+                <footer>
+                    <button
+                        name="action_create_canton"
+                        type="object"
+                        string="Guardar"
+                        class="btn-primary"
+                    />
+                    <button string="Cancelar" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_l10n_ec_ote_canton_wizard" model="ir.actions.act_window">
+        <field name="name">Nuevo Cantón</field>
+        <field name="res_model">l10n_ec_ote.canton.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="view_l10n_ec_ote_parish_wizard_form" model="ir.ui.view">
+        <field name="name">l10n_ec_ote.parish.wizard.form</field>
+        <field name="model">l10n_ec_ote.parish.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Crear Parroquia">
+                <group>
+                    <field name="country_id" string="País" readonly="1" />
+                    <field
+                        name="state_id"
+                        string="Provincia"
+                        domain="[('country_id', '=', country_id)]"
+                    />
+                    <field name="canton_id" domain="[('state_id', '=', state_id)]" />
+                    <field name="parish_type" />
+                    <field name="name" />
+                    <field name="code" string="Código" readonly="1" force_save="1" />
+                </group>
+                <footer>
+                    <button
+                        name="action_create_parish"
+                        type="object"
+                        string="Guardar"
+                        class="btn-primary"
+                    />
+                    <button string="Cancelar" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_l10n_ec_ote_parish_wizard" model="ir.actions.act_window">
+        <field name="name">Nueva Parroquia</field>
+        <field name="res_model">l10n_ec_ote.parish.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

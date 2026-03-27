@@ -1,5 +1,6 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
+from odoo.exceptions import ValidationError
 from odoo.tests.common import TransactionCase
 
 
@@ -11,7 +12,9 @@ class TestL10nEcOte(TransactionCase):
         super().setUpClass()
         # The data is loaded from CSV, so we find the records to test them.
         cls.state_azuay = cls.env.ref("base.state_ec_01")
+        cls.state_loja = cls.env.ref("base.state_ec_11")
         cls.canton_cuenca = cls.env.ref("l10n_ec_ote.canton_0101")
+        cls.canton_pindal = cls.env.ref("l10n_ec_ote.canton_1114")
         # Suffix 01 (<50)
         cls.parish_bellavista = cls.env.ref("l10n_ec_ote.parish_010101")
 
@@ -180,3 +183,161 @@ class TestL10nEcOte(TransactionCase):
             {"name": "Partner False", "country_id": False}
         )
         self.assertEqual(partner2.country_id, self.env.ref("base.ec"))
+
+    def test_canton_next_code_for_state(self):
+        """The next canton code follows the province sequence."""
+        next_code = self.env["l10n_ec_ote.canton"]._get_next_code(self.state_loja)
+        self.assertEqual(next_code, "1117")
+
+    def test_canton_wizard_creates_next_code(self):
+        """The canton wizard creates a canton with Ecuador defaults."""
+        wizard = self.env["l10n_ec_ote.canton.wizard"].create(
+            {
+                "state_id": self.state_loja.id,
+                "name": "Nuevo Cantón",
+            }
+        )
+
+        self.assertEqual(wizard.country_id, self.env.ref("base.ec"))
+        self.assertEqual(wizard.code, "1117")
+
+        action = wizard.action_create_canton()
+        canton = self.env["l10n_ec_ote.canton"].browse(action["res_id"])
+
+        self.assertTrue(canton.exists())
+        self.assertEqual(canton.state_id, self.state_loja)
+        self.assertEqual(canton.code, "1117")
+        self.assertEqual(canton.name, "Nuevo Cantón")
+
+    def test_parish_next_code_for_urban_and_rural(self):
+        """The parish helper separates urban and rural suffixes."""
+        parish_model = self.env["l10n_ec_ote.parish"]
+        self.assertEqual(
+            parish_model._get_next_code(self.canton_pindal, "urban"), "111401"
+        )
+        self.assertEqual(
+            parish_model._get_next_code(self.canton_pindal, "rural"), "111454"
+        )
+
+    def test_parish_wizard_creates_rural_code(self):
+        """The parish wizard creates the next rural parish code."""
+        wizard = self.env["l10n_ec_ote.parish.wizard"].create(
+            {
+                "state_id": self.state_loja.id,
+                "canton_id": self.canton_pindal.id,
+                "parish_type": "rural",
+                "name": "Nueva Rural",
+            }
+        )
+
+        self.assertEqual(wizard.country_id, self.env.ref("base.ec"))
+        self.assertEqual(wizard.code, "111454")
+
+        action = wizard.action_create_parish()
+        parish = self.env["l10n_ec_ote.parish"].browse(action["res_id"])
+
+        self.assertTrue(parish.exists())
+        self.assertEqual(parish.canton_id, self.canton_pindal)
+        self.assertEqual(parish.code, "111454")
+        self.assertEqual(parish.name, "Nueva Rural")
+
+    def test_parish_wizard_creates_urban_code(self):
+        """The parish wizard creates the next urban parish code."""
+        wizard = self.env["l10n_ec_ote.parish.wizard"].create(
+            {
+                "state_id": self.state_loja.id,
+                "canton_id": self.canton_pindal.id,
+                "parish_type": "urban",
+                "name": "Nueva Urbana",
+            }
+        )
+
+        self.assertEqual(wizard.code, "111401")
+
+        action = wizard.action_create_parish()
+        parish = self.env["l10n_ec_ote.parish"].browse(action["res_id"])
+
+        self.assertTrue(parish.exists())
+        self.assertEqual(parish.canton_id, self.canton_pindal)
+        self.assertEqual(parish.code, "111401")
+        self.assertEqual(parish.name, "Nueva Urbana")
+
+    def test_canton_code_prefix_validation(self):
+        """Cantons must use the selected province code as prefix."""
+        with self.assertRaises(ValidationError):
+            self.env["l10n_ec_ote.canton"].create(
+                {
+                    "state_id": self.state_loja.id,
+                    "name": "Cantón Inválido",
+                    "code": "0199",
+                }
+            )
+
+    def test_parish_code_prefix_validation(self):
+        """Parishes must use the selected canton code as prefix."""
+        with self.assertRaises(ValidationError):
+            self.env["l10n_ec_ote.parish"].create(
+                {
+                    "canton_id": self.canton_pindal.id,
+                    "name": "Parroquia Inválida",
+                    "code": "119901",
+                }
+            )
+
+    def test_canton_create_assigns_next_code_without_wizard(self):
+        """Direct canton creation still auto-assigns the next code."""
+        canton = self.env["l10n_ec_ote.canton"].create(
+            {
+                "state_id": self.state_loja.id,
+                "name": "Cantón Directo",
+            }
+        )
+
+        self.assertEqual(canton.code, "1117")
+
+    def test_parish_create_assigns_next_code_from_context(self):
+        """Direct parish creation uses the parish type from context."""
+        parish = (
+            self.env["l10n_ec_ote.parish"]
+            .with_context(l10n_ec_ote_parish_type="urban")
+            .create(
+                {
+                    "canton_id": self.canton_pindal.id,
+                    "name": "Parroquia Directa",
+                }
+            )
+        )
+
+        self.assertEqual(parish.code, "111401")
+
+    def test_parish_invalid_type_raises(self):
+        """Only urban and rural parish types are accepted."""
+        with self.assertRaises(ValidationError):
+            self.env["l10n_ec_ote.parish"]._get_next_code(self.canton_pindal, "other")
+
+    def test_parish_wizard_syncs_state_from_canton(self):
+        """Selecting a canton updates the wizard province."""
+        wizard = self.env["l10n_ec_ote.parish.wizard"].new(
+            {
+                "state_id": self.state_azuay.id,
+                "canton_id": self.canton_pindal.id,
+                "parish_type": "rural",
+                "name": "Nueva Rural",
+            }
+        )
+
+        wizard._onchange_canton_id()
+
+        self.assertEqual(wizard.state_id, self.state_loja)
+
+    def test_parish_wizard_rejects_mismatched_state(self):
+        """Wizard validation rejects cantons outside the selected province."""
+        with self.assertRaises(ValidationError):
+            self.env["l10n_ec_ote.parish.wizard"].create(
+                {
+                    "state_id": self.state_azuay.id,
+                    "canton_id": self.canton_pindal.id,
+                    "parish_type": "rural",
+                    "name": "Nueva Rural",
+                }
+            )

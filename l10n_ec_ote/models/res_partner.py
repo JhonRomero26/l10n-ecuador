@@ -70,7 +70,7 @@ class ResPartner(models.Model):
     canton_id = fields.Many2one(
         "l10n_ec_ote.canton",
         ondelete="restrict",
-        string="Canton",
+        string="Cantón",
     )
     parish_id = fields.Many2one(
         "l10n_ec_ote.parish",

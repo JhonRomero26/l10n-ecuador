@@ -23,10 +23,15 @@ msgstr "Añadir campos de Cantón y Parroquia al contacto"
 #. module: l10n_ec_ote
 #: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_canton__name
 #: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_parish__canton_id
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_canton_wizard__name
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_parish_wizard__canton_id
 #: model:ir.model.fields,field_description:l10n_ec_ote.field_res_partner__canton_id
 #: model:ir.model.fields,field_description:l10n_ec_ote.field_res_users__canton_id
 #: model_terms:ir.ui.view,arch_db:l10n_ec_ote.partner_form_view_ec
-msgid "Canton"
+#: model_terms:ir.ui.view,arch_db:l10n_ec_ote.view_l10n_ec_ote_canton_form
+#: model_terms:ir.ui.view,arch_db:l10n_ec_ote.view_l10n_ec_ote_canton_wizard_form
+#: model_terms:ir.ui.view,arch_db:l10n_ec_ote.view_l10n_ec_ote_parish_form
+msgid "Cantón"
 msgstr "Cantón"
 
 #. module: l10n_ec_ote
@@ -38,8 +43,43 @@ msgstr "Cantones"
 #. module: l10n_ec_ote
 #: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_canton__code
 #: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_parish__code
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_canton_wizard__code
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_parish_wizard__code
 msgid "Code"
 msgstr "Código"
+
+#. module: l10n_ec_ote
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_canton_wizard__country_id
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_parish_wizard__country_id
+msgid "Country"
+msgstr "País"
+
+#. module: l10n_ec_ote
+#: model:ir.actions.act_window,name:l10n_ec_ote.action_l10n_ec_ote_canton
+#: model:ir.ui.menu,name:l10n_ec_ote.menu_l10n_ec_ote_canton
+msgid "Cantones"
+msgstr "Cantones"
+
+#. module: l10n_ec_ote
+#: model:ir.actions.act_window,name:l10n_ec_ote.action_l10n_ec_ote_parish
+#: model:ir.ui.menu,name:l10n_ec_ote.menu_l10n_ec_ote_parish
+#: model_terms:ir.ui.view,arch_db:l10n_ec_ote.view_l10n_ec_ote_canton_form
+msgid "Parroquias"
+msgstr "Parroquias"
+
+#. module: l10n_ec_ote
+#: model:ir.actions.act_window,name:l10n_ec_ote.action_l10n_ec_ote_canton_wizard
+#: model_terms:ir.ui.view,arch_db:l10n_ec_ote.view_l10n_ec_ote_canton_form
+#: model_terms:ir.ui.view,arch_db:l10n_ec_ote.view_l10n_ec_ote_canton_list
+msgid "Nuevo Cantón"
+msgstr "Nuevo Cantón"
+
+#. module: l10n_ec_ote
+#: model:ir.actions.act_window,name:l10n_ec_ote.action_l10n_ec_ote_parish_wizard
+#: model_terms:ir.ui.view,arch_db:l10n_ec_ote.view_l10n_ec_ote_parish_form
+#: model_terms:ir.ui.view,arch_db:l10n_ec_ote.view_l10n_ec_ote_parish_list
+msgid "Nueva Parroquia"
+msgstr "Nueva Parroquia"
 
 #. module: l10n_ec_ote
 #: model:ir.model,name:l10n_ec_ote.model_res_country_state
@@ -97,6 +137,76 @@ msgid "Parish"
 msgstr "Parroquia"
 
 #. module: l10n_ec_ote
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_canton__state_id
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_canton_wizard__state_id
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_parish_wizard__state_id
+msgid "Province"
+msgstr "Provincia"
+
+#. module: l10n_ec_ote
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_parish_wizard__name
+#: model_terms:ir.ui.view,arch_db:l10n_ec_ote.view_l10n_ec_ote_parish_form
+msgid "Parroquia"
+msgstr "Parroquia"
+
+#. module: l10n_ec_ote
+#: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_parish_wizard__parish_type
+msgid "Tipo de parroquia"
+msgstr "Tipo de parroquia"
+
+#. module: l10n_ec_ote
+#: model:ir.model,name:l10n_ec_ote.model_l10n_ec_ote_canton_wizard
+msgid "Canton Wizard"
+msgstr "Asistente de Cantón"
+
+#. module: l10n_ec_ote
+#: model:ir.model,name:l10n_ec_ote.model_l10n_ec_ote_parish_wizard
+msgid "Parish Wizard"
+msgstr "Asistente de Parroquia"
+
+#. module: l10n_ec_ote
+#: model_terms:ir.ui.view,arch_db:l10n_ec_ote.view_l10n_ec_ote_canton_wizard_form
+msgid "Crear Cantón"
+msgstr "Crear Cantón"
+
+#. module: l10n_ec_ote
+#: model_terms:ir.ui.view,arch_db:l10n_ec_ote.view_l10n_ec_ote_parish_wizard_form
+msgid "Crear Parroquia"
+msgstr "Crear Parroquia"
+
+#. module: l10n_ec_ote
+#: model_terms:ir.ui.view,arch_db:l10n_ec_ote.view_l10n_ec_ote_canton_wizard_form
+#: model_terms:ir.ui.view,arch_db:l10n_ec_ote.view_l10n_ec_ote_parish_wizard_form
+msgid "Guardar"
+msgstr "Guardar"
+
+#. module: l10n_ec_ote
+#: model_terms:ir.ui.view,arch_db:l10n_ec_ote.view_l10n_ec_ote_canton_wizard_form
+#: model_terms:ir.ui.view,arch_db:l10n_ec_ote.view_l10n_ec_ote_parish_wizard_form
+msgid "Cancelar"
+msgstr "Cancelar"
+
+#. module: l10n_ec_ote
+#: model_terms:ir.actions.act_window,help:l10n_ec_ote.action_l10n_ec_ote_canton
+msgid "Cree y mantenga los cantones de Ecuador."
+msgstr "Cree y mantenga los cantones de Ecuador."
+
+#. module: l10n_ec_ote
+#: model_terms:ir.actions.act_window,help:l10n_ec_ote.action_l10n_ec_ote_canton
+msgid "Use el botón Nuevo Cantón para generar el siguiente código disponible por provincia."
+msgstr "Use el botón Nuevo Cantón para generar el siguiente código disponible por provincia."
+
+#. module: l10n_ec_ote
+#: model_terms:ir.actions.act_window,help:l10n_ec_ote.action_l10n_ec_ote_parish
+msgid "Cree y mantenga las parroquias de Ecuador."
+msgstr "Cree y mantenga las parroquias de Ecuador."
+
+#. module: l10n_ec_ote
+#: model_terms:ir.actions.act_window,help:l10n_ec_ote.action_l10n_ec_ote_parish
+msgid "Use el botón Nueva Parroquia para generar el siguiente código urbano o rural dentro del cantón."
+msgstr "Use el botón Nueva Parroquia para generar el siguiente código urbano o rural dentro del cantón."
+
+#. module: l10n_ec_ote
 #: model:ir.model,name:l10n_ec_ote.model_l10n_ec_ote_parish
 #: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_canton__parish_ids
 msgid "Parishes"
@@ -109,9 +219,76 @@ msgid "Partner Country Code"
 msgstr "Código de País del Contacto"
 
 #. module: l10n_ec_ote
-#: model:ir.model.fields,field_description:l10n_ec_ote.field_l10n_ec_ote_canton__state_id
-msgid "Province"
-msgstr "Provincia"
+#. odoo-python
+#: code:addons/l10n_ec_ote/models/l10n_ec_ote.py:0
+msgid "Cantons can only be created for Ecuadorian provinces."
+msgstr "Los cantones solo se pueden crear para provincias ecuatorianas."
+
+#. module: l10n_ec_ote
+#. odoo-python
+#: code:addons/l10n_ec_ote/models/l10n_ec_ote.py:0
+msgid "The canton code must contain exactly 4 digits."
+msgstr "El código del cantón debe tener exactamente 4 dígitos."
+
+#. module: l10n_ec_ote
+#. odoo-python
+#: code:addons/l10n_ec_ote/models/l10n_ec_ote.py:0
+msgid "The canton code must start with the province code %(prefix)s."
+msgstr "El código del cantón debe empezar con el código de provincia %(prefix)s."
+
+#. module: l10n_ec_ote
+#. odoo-python
+#: code:addons/l10n_ec_ote/models/l10n_ec_ote.py:0
+msgid "Province %(state)s must have a 2 digit numeric code."
+msgstr "La provincia %(state)s debe tener un código numérico de 2 dígitos."
+
+#. module: l10n_ec_ote
+#. odoo-python
+#: code:addons/l10n_ec_ote/models/l10n_ec_ote.py:0
+msgid "Province %(state)s has no remaining canton codes."
+msgstr "La provincia %(state)s no tiene códigos de cantón disponibles."
+
+#. module: l10n_ec_ote
+#. odoo-python
+#: code:addons/l10n_ec_ote/models/l10n_ec_ote.py:0
+msgid "Parishes can only be created for Ecuadorian cantons."
+msgstr "Las parroquias solo se pueden crear para cantones ecuatorianos."
+
+#. module: l10n_ec_ote
+#. odoo-python
+#: code:addons/l10n_ec_ote/models/l10n_ec_ote.py:0
+msgid "The parish code must contain exactly 6 digits."
+msgstr "El código de la parroquia debe tener exactamente 6 dígitos."
+
+#. module: l10n_ec_ote
+#. odoo-python
+#: code:addons/l10n_ec_ote/models/l10n_ec_ote.py:0
+msgid "The parish code must start with the canton code %(prefix)s."
+msgstr "El código de la parroquia debe empezar con el código de cantón %(prefix)s."
+
+#. module: l10n_ec_ote
+#. odoo-python
+#: code:addons/l10n_ec_ote/models/l10n_ec_ote.py:0
+msgid "Parish type must be either urban or rural."
+msgstr "El tipo de parroquia debe ser urbano o rural."
+
+#. module: l10n_ec_ote
+#. odoo-python
+#: code:addons/l10n_ec_ote/models/l10n_ec_ote.py:0
+msgid "Canton %(canton)s has no remaining urban parish codes."
+msgstr "El cantón %(canton)s no tiene códigos disponibles para parroquias urbanas."
+
+#. module: l10n_ec_ote
+#. odoo-python
+#: code:addons/l10n_ec_ote/models/l10n_ec_ote.py:0
+msgid "Canton %(canton)s has no remaining rural parish codes."
+msgstr "El cantón %(canton)s no tiene códigos disponibles para parroquias rurales."
+
+#. module: l10n_ec_ote
+#. odoo-python
+#: code:addons/l10n_ec_ote/wizards/location_wizard.py:0
+msgid "Only Ecuadorian provinces are allowed."
+msgstr "Solo se permiten provincias ecuatorianas."
 
 #. module: l10n_ec_ote
 #: model:ir.model.fields,help:l10n_ec_ote.field_res_partner__partner_country_code
