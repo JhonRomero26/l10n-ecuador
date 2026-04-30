@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="l10n_ec_res_partner_bank_view_form" model="ir.ui.view">
+        <field name="name">l10n_ec.res.partner.bank.form</field>
+        <field name="model">res.partner.bank</field>
+        <field name="inherit_id" ref="base.view_partner_bank_form" />
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="before">
+                <field name="country_code" invisible="1" />
+                <field
+                    name="l10n_ec_account_bank_type"
+                    invisible="country_code != 'EC'"
+                    required="country_code == 'EC'"
+                />
+            </field>
+        </field>
+    </record>
+</odoo>
